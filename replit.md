@@ -52,6 +52,13 @@ social-copilot/
 - Run with workflow "Start application"
 
 ## Recent Changes
+- January 21, 2026: Auditoria de Segurança Completa (v1.5.0)
+  - API de IA movida para backend (/api/generate) - API key protegida
+  - JWT_SECRET obrigatório (servidor não inicia sem)
+  - CORS restrito para domínios Replit e localhost
+  - Rate limiting: global (100/min), login (5/15min), signup (5/h), AI (10/min)
+  - Validação de input: platform, objective, status, topic
+  - Sanitização contra prompt injection
 - January 21, 2026: Sistema de Autenticação (v1.4.0)
   - Login/cadastro com email e senha
   - Hash bcrypt e JWT para sessões seguras

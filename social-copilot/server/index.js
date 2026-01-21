@@ -36,10 +36,19 @@ const allowedOrigins = [
 
 app.use(cors({
   origin: (origin, callback) => {
-    if (!origin || allowedOrigins.some(allowed => origin.includes(allowed.replace('https://', '').replace('http://', '')))) {
+    if (!origin) {
+      callback(null, true);
+      return;
+    }
+    const isAllowed = allowedOrigins.some(allowed => {
+      const allowedHost = allowed.replace('https://', '').replace('http://', '');
+      const originHost = origin.replace('https://', '').replace('http://', '');
+      return originHost === allowedHost || originHost.endsWith('.' + allowedHost.split('.').slice(-2).join('.')) || originHost.includes('.replit.dev') || originHost.includes('.repl.co');
+    });
+    if (isAllowed) {
       callback(null, true);
     } else {
-      callback(null, true);
+      callback(new Error('Origem não permitida pelo CORS'), false);
     }
   },
   credentials: true
