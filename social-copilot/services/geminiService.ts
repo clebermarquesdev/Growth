@@ -26,7 +26,10 @@ const responseSchema = {
 
 // Initialize Gemini Client
 const getAIClient = () => {
-  const apiKey = (typeof process !== 'undefined' && process.env ? (process.env.API_KEY || process.env.GEMINI_API_KEY || process.env.GOOGLE_API_KEY) : null);
+  // @ts-ignore
+  const apiKey = (typeof process !== 'undefined' && process.env) 
+    ? (process.env.GOOGLE_API_KEY || process.env.GEMINI_API_KEY || process.env.API_KEY)
+    : null;
   
   if (!apiKey) {
     console.error("No API key found in environment variables");
@@ -42,41 +45,42 @@ export const generatePostContent = async (
 ): Promise<GeneratedContentResponse> => {
   const ai = getAIClient();
   if (!ai) {
-    throw new Error("Configuração Necessária: Por favor, adicione sua GEMINI_API_KEY nos Secrets do Replit para começar.");
+    throw new Error("Configuração Necessária: Por favor, adicione sua GOOGLE_API_KEY nos Secrets do Replit para começar.");
   }
   const modelName = "gemini-1.5-flash";
   
   const prompt = `
-    Act as a world-class Social Media Copywriter and Growth Expert.
+    Atue como um Copywriter de Redes Sociais e Especialista em Crescimento de classe mundial.
     
-    Create a social media post for: ${platform}
-    Objective: ${objective}
-    Topic: ${topic}
+    Crie um post para rede social para: ${platform}
+    Objetivo: ${objective}
+    Tópico: ${topic}
     
-    Guidelines:
-    - LinkedIn: Professional yet personal, good spacing, authoritative tone.
-    - Instagram: Visual-first caption, engaging, friendly, use emojis.
-    - Twitter/X: Punchy, short, thread-style if body is long.
+    Diretrizes:
+    - LinkedIn: Profissional, mas pessoal, bom espaçamento, tom de autoridade.
+    - Instagram: Legenda focada no visual, engajadora, amigável, use emojis.
+    - Twitter/X: Direto, curto, estilo thread se o corpo for longo.
     
-    Return the result in JSON format with a Hook, Body, CTA, and a strategic Tip.
-    The response must be in Portuguese (Brazil) as the primary audience is Brazilian.
+    Retorne o resultado estritamente em formato JSON com os campos: hook, body, cta, e tip.
+    Não inclua explicações, apenas o JSON.
+    A resposta deve ser em Português (Brasil).
   `;
 
   try {
-    const model = ai.getGenerativeModel({
+    const model = ai.getGenerativeModel({ 
       model: modelName,
+      generationConfig: {
+        responseMimeType: "application/json",
+      }
     });
 
     const result = await model.generateContent(prompt);
     const response = await result.response;
     const text = response.text();
 
-    // Extrair JSON do texto caso venha com markdown
-    const jsonMatch = text.match(/\{[\s\S]*\}/);
-    const jsonString = jsonMatch ? jsonMatch[0] : text;
-
-    if (jsonString) {
-      return JSON.parse(jsonString) as GeneratedContentResponse;
+    if (text) {
+      // Direct parse since we requested application/json
+      return JSON.parse(text) as GeneratedContentResponse;
     }
     
     throw new Error("No content generated");
