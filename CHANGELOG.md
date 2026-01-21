@@ -4,6 +4,62 @@ Todas as mudanças notáveis neste projeto serão documentadas neste arquivo.
 
 O formato é baseado em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.0/).
 
+## [1.2.0] - 2026-01-21
+
+### Adicionado
+
+#### Sistema de Onboarding Inteligente (Creator Profiling)
+Novo fluxo de onboarding guiado em 5 etapas para personalizar a geração de conteúdo:
+
+**Etapa 1 - Identidade do Criador**
+- Definição profissional (ex: Fundador de SaaS, Coach, Social Media)
+- Tempo de experiência na área
+- Posicionamento: Educador, Autoridade, Inspirador ou Vendedor
+
+**Etapa 2 - Público-Alvo**
+- Perfil do público principal
+- Nível do público: Iniciante, Intermediário ou Avançado
+- Principal dor do público
+- Principal desejo ou objetivo do público
+
+**Etapa 3 - Produto/Oferta**
+- Tipo de oferta: Produto, Serviço, Conteúdo Gratuito ou Nada ainda
+- Principal resultado que a oferta entrega
+- Foco do conteúdo: Autoridade, Relacionamento ou Venda
+
+**Etapa 4 - Tom de Voz e Estilo**
+- Tom de voz: Profissional, Casual, Provocativo ou Didático
+- Preferência de tamanho: Curto, Médio ou Longo
+- Referência de estilo (opcional)
+
+**Etapa 5 - Objetivos de Conteúdo**
+- Objetivo principal: Crescer Audiência, Gerar Leads ou Vender
+- Redes sociais de foco (múltipla seleção)
+- Frequência de postagem
+
+#### Integração do Perfil com a IA
+- Perfil do criador é usado como contexto fixo em todas as gerações
+- A IA ajusta linguagem, profundidade e CTA baseado no perfil
+- Prompt personalizado considera dores, desejos e tom de voz do criador
+
+#### Interface do Usuário
+- Barra de progresso visual no onboarding
+- Exemplos em cada pergunta para facilitar respostas
+- Perfil do criador exibido na sidebar
+- Botão de editar perfil nas configurações
+- Validação inteligente por etapa
+
+### Alterado
+- Plataforma padrão no gerador agora é baseada nas preferências do perfil
+- Layout atualizado para mostrar informações do perfil do criador
+
+### Técnico
+- Novo modelo de dados `CreatorProfile` com tipos TypeScript
+- Perfil salvo no localStorage para persistência
+- Função `buildProfileContext()` para construir contexto da IA
+
+---
+
 ## [1.1.0] - 2026-01-21
 
 ### Adicionado

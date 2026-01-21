@@ -34,6 +34,12 @@ social-copilot/
 - Build with `npm run build`
 
 ## Recent Changes
+- January 21, 2026: Sistema de Onboarding Inteligente (v1.2.0)
+  - Onboarding guiado em 5 etapas para personalização do perfil do criador
+  - Coleta: identidade, público-alvo, oferta, tom de voz e objetivos
+  - Perfil usado como contexto fixo na geração de conteúdo pela IA
+  - Perfil exibido na sidebar com opção de editar
+  - Persistência via localStorage
 - January 21, 2026: Melhorias no gerador de conteúdo
   - Adicionadas 3 novas plataformas: TikTok, Facebook, Threads
   - Adicionados 3 novos objetivos: Educativo, Storytelling, Humor
