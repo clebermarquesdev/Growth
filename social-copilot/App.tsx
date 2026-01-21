@@ -6,21 +6,21 @@ import CalendarView from './components/CalendarView';
 import AnalyticsView from './components/AnalyticsView';
 import { ViewState, Post, Platform, Objective, PostStatus } from './types';
 
-// Mock Data for MVP visualization
+// Mock Data para visualização do MVP
 const MOCK_POSTS: Post[] = [
   {
     id: '1',
     platform: Platform.LINKEDIN,
     objective: Objective.AUTHORITY,
-    topic: 'Future of SaaS',
+    topic: 'Futuro do SaaS',
     content: {
-      hook: 'SaaS is dead. Long live Micro-SaaS.',
-      body: 'The era of giant monolithic software is ending. Niche problems require niche solutions...',
-      cta: 'What niche are you building for?',
-      tip: 'Controversial hooks drive comments.'
+      hook: 'O SaaS como conhecemos está mudando.',
+      body: 'A era dos softwares gigantes e complexos está dando lugar a soluções de nicho...',
+      cta: 'Em qual nicho você está apostando?',
+      tip: 'Ganchos instigantes geram mais comentários.'
     },
     status: PostStatus.PUBLISHED,
-    scheduledDate: new Date(Date.now() - 86400000 * 2).toISOString(), // 2 days ago
+    scheduledDate: new Date(Date.now() - 86400000 * 2).toISOString(), // 2 dias atrás
     metrics: { likes: 45, comments: 12 },
     createdAt: Date.now()
   },
@@ -28,15 +28,15 @@ const MOCK_POSTS: Post[] = [
     id: '2',
     platform: Platform.INSTAGRAM,
     objective: Objective.ENGAGEMENT,
-    topic: 'Workspace Tour',
+    topic: 'Tour pelo Escritório',
     content: {
-      hook: 'Where the magic happens ✨',
-      body: 'Finally organized my desk. A clear space = clear mind.',
-      cta: 'Show me your desk setup in stories!',
-      tip: 'Personal behind-the-scenes builds trust.'
+      hook: 'Onde a mágica acontece ✨',
+      body: 'Finalmente organizei minha mesa. Espaço limpo = mente limpa.',
+      cta: 'Me mostre seu setup nos stories!',
+      tip: 'Conteúdo de bastidores gera confiança.'
     },
     status: PostStatus.PUBLISHED,
-    scheduledDate: new Date(Date.now() - 86400000).toISOString(), // Yesterday
+    scheduledDate: new Date(Date.now() - 86400000).toISOString(), // Ontem
     metrics: { likes: 120, comments: 8 },
     createdAt: Date.now()
   }

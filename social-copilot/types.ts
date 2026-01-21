@@ -5,15 +5,15 @@ export enum Platform {
 }
 
 export enum Objective {
-  ENGAGEMENT = 'Engagement',
-  AUTHORITY = 'Authority',
-  SALES = 'Sales/Leads'
+  ENGAGEMENT = 'Engajamento',
+  AUTHORITY = 'Autoridade',
+  SALES = 'Vendas/Leads'
 }
 
 export enum PostStatus {
-  DRAFT = 'Draft',
-  SCHEDULED = 'Scheduled',
-  PUBLISHED = 'Published'
+  DRAFT = 'Rascunho',
+  SCHEDULED = 'Agendado',
+  PUBLISHED = 'Publicado'
 }
 
 export interface PostContent {
