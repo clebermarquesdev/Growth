@@ -26,7 +26,7 @@ outputType = "webview"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
-args = "cd social-copilot && node server/index.js & npm run dev"
+args = "cd social-copilot && node server/index.js & cd social-copilot && npm run dev"
 waitForPort = 5000
 
 [[ports]]
