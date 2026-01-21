@@ -1,0 +1,182 @@
+PROMPT — Auditoria de Segurança do SaaS de Marketing & Vendas (MVP)
+🎯 PAPEL DA IA
+
+Você atuará como:
+
+Security Engineer (Web SaaS)
+
+Arquiteto de Software
+
+Especialista em Autenticação e Proteção de APIs
+
+Product Engineer focado em MVP seguro
+
+Seu objetivo é avaliar o nível atual de segurança do SaaS, identificar vulnerabilidades reais, riscos práticos e sugerir correções priorizadas, sem comprometer a velocidade de desenvolvimento.
+
+🧩 CONTEXTO DO PRODUTO
+
+O produto é um SaaS de marketing/vendas com IA, contendo:
+
+Autenticação própria (email + senha, JWT)
+
+Geração de conteúdo via LLM
+
+Onboarding de criador (Creator Profile)
+
+Dashboard de métricas básicas
+
+Backend self-hosted
+
+Sem uso de Clerk, Replit Auth ou domínio pago
+
+Ambiente MVP / early-stage
+
+🎯 OBJETIVO DA AUDITORIA
+
+Responder claramente:
+
+O sistema é seguro o suficiente para um MVP público?
+
+Quais riscos podem causar:
+
+Vazamento de dados
+
+Uso indevido da IA
+
+Comprometimento de contas
+
+O que precisa ser corrigido agora vs. pode esperar
+
+🔍 ESCOPO DA ANÁLISE (OBRIGATÓRIO)
+
+A auditoria deve cobrir:
+
+1️⃣ Autenticação & Sessão
+
+Hash de senhas (bcrypt)
+
+JWT (expiração, payload, secret)
+
+Armazenamento do token (cookie vs localStorage)
+
+Logout real vs fake logout
+
+Proteção contra brute force
+
+2️⃣ Autorização & Controle de Acesso
+
+Isolamento de dados por usuário
+
+Proteção contra acesso cruzado (IDOR)
+
+Verificação de ownership em rotas sensíveis
+
+Feature gating (free vs paid, se existir)
+
+3️⃣ Backend & API
+
+Validação de input (SQL/NoSQL injection)
+
+Sanitização de dados
+
+Rate limit em endpoints críticos
+
+Exposição de erros e stack traces
+
+Uso correto de variáveis de ambiente
+
+4️⃣ Frontend
+
+Exposição de tokens
+
+Proteção de rotas no client
+
+Dados sensíveis no bundle
+
+Manipulação de estados de auth
+
+5️⃣ Integração com LLM
+
+Prompt injection
+
+Vazamento de dados do Creator Profile
+
+Escopo do contexto enviado à LLM
+
+Logs contendo dados sensíveis
+
+6️⃣ Dados & Privacidade
+
+Dados armazenados do usuário
+
+Senhas e informações sensíveis
+
+Logs e backups
+
+Possível adequação futura à LGPD
+
+7️⃣ Infraestrutura & Deploy
+
+Secrets no repositório
+
+Variáveis de ambiente
+
+HTTPS (quando disponível)
+
+Dependências vulneráveis
+
+Configuração de CORS
+
+🧠 METODOLOGIA DE ANÁLISE
+
+Para cada vulnerabilidade identificada, informe:
+
+📌 Descrição do problema
+
+🔥 Severidade (Alta / Média / Baixa)
+
+💥 Impacto real no negócio
+
+🛠️ Correção recomendada
+
+⏱ Prioridade (Agora / Próxima iteração / Futuro)
+
+🚫 O QUE NÃO FAZER
+
+Não sugerir ferramentas enterprise pagas
+
+Não exigir domínio pago
+
+Não sugerir soluções que atrasem o MVP
+
+Não focar em riscos irreais para o estágio atual
+
+🎯 SAÍDA FINAL ESPERADA
+
+A IA deve entregar:
+
+Resumo executivo
+
+O SaaS está ou não pronto para exposição pública?
+
+Lista priorizada de vulnerabilidades
+
+Ordenadas por risco real
+
+Checklist de correções rápidas (quick wins)
+
+Até 1–2 horas de trabalho
+
+Checklist de segurança mínima para MVP
+
+Recomendações futuras (pós-validação)
+
+O que só faz sentido depois que o produto provar valor
+
+🧠 NÍVEL DE EXIGÊNCIA
+
+O produto não precisa ser enterprise-grade, mas não pode ser irresponsável.
+
+A pergunta central é:
+
+“Isso é aceitável para um MVP público com usuários reais?”
