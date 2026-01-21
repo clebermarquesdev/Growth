@@ -1,4 +1,4 @@
-import { Post, PostStatus } from '../types';
+import { Post, PostStatus, CreatorProfile } from '../types';
 
 const API_BASE = '/api';
 
@@ -6,6 +6,29 @@ export const fetchPosts = async (): Promise<Post[]> => {
   const response = await fetch(`${API_BASE}/posts`);
   if (!response.ok) {
     throw new Error('Failed to fetch posts');
+  }
+  return response.json();
+};
+
+export const fetchProfile = async (): Promise<CreatorProfile | null> => {
+  const response = await fetch(`${API_BASE}/profile`);
+  if (response.status === 404) {
+    return null;
+  }
+  if (!response.ok) {
+    throw new Error('Failed to fetch profile');
+  }
+  return response.json();
+};
+
+export const saveProfile = async (profile: CreatorProfile): Promise<CreatorProfile> => {
+  const response = await fetch(`${API_BASE}/profile`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(profile),
+  });
+  if (!response.ok) {
+    throw new Error('Failed to save profile');
   }
   return response.json();
 };

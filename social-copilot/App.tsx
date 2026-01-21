@@ -6,9 +6,7 @@ import CalendarView from './components/CalendarView';
 import AnalyticsView from './components/AnalyticsView';
 import Onboarding from './components/Onboarding';
 import { ViewState, Post, PostStatus, CreatorProfile } from './types';
-import { fetchPosts, createPost, updatePostStatus, updatePostMetrics } from './services/apiService';
-
-const PROFILE_STORAGE_KEY = 'social_copilot_creator_profile';
+import { fetchPosts, createPost, updatePostStatus, updatePostMetrics, fetchProfile, saveProfile } from './services/apiService';
 
 const App: React.FC = () => {
   const [currentView, setCurrentView] = useState<ViewState>('dashboard');
@@ -18,16 +16,20 @@ const App: React.FC = () => {
   const [showOnboarding, setShowOnboarding] = useState(false);
 
   useEffect(() => {
-    const savedProfile = localStorage.getItem(PROFILE_STORAGE_KEY);
-    if (savedProfile) {
+    const loadProfile = async () => {
       try {
-        setCreatorProfile(JSON.parse(savedProfile));
-      } catch {
+        const profile = await fetchProfile();
+        if (profile) {
+          setCreatorProfile(profile);
+        } else {
+          setShowOnboarding(true);
+        }
+      } catch (error) {
+        console.error('Failed to load profile:', error);
         setShowOnboarding(true);
       }
-    } else {
-      setShowOnboarding(true);
-    }
+    };
+    loadProfile();
   }, []);
 
   useEffect(() => {
@@ -44,10 +46,16 @@ const App: React.FC = () => {
     loadPosts();
   }, []);
 
-  const handleOnboardingComplete = (profile: CreatorProfile) => {
-    setCreatorProfile(profile);
-    localStorage.setItem(PROFILE_STORAGE_KEY, JSON.stringify(profile));
-    setShowOnboarding(false);
+  const handleOnboardingComplete = async (profile: CreatorProfile) => {
+    try {
+      const savedProfile = await saveProfile(profile);
+      setCreatorProfile(savedProfile);
+      setShowOnboarding(false);
+    } catch (error) {
+      console.error('Failed to save profile:', error);
+      setCreatorProfile(profile);
+      setShowOnboarding(false);
+    }
   };
 
   const handleEditProfile = () => {
