@@ -6,25 +6,58 @@ import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import rateLimit from 'express-rate-limit';
 import cookieParser from 'cookie-parser';
+import OpenAI from 'openai';
 
 dotenv.config();
 const { Pool } = pg;
 
 const app = express();
 const PORT = process.env.PORT || 3001;
-const JWT_SECRET = process.env.JWT_SECRET || 'social-copilot-jwt-secret-change-in-production';
+
+if (!process.env.JWT_SECRET) {
+  console.error('ERRO FATAL: JWT_SECRET não está definido. Configure a variável de ambiente.');
+  process.exit(1);
+}
+
+const JWT_SECRET = process.env.JWT_SECRET;
 const JWT_EXPIRY = '7d';
 const SALT_ROUNDS = 10;
 
+const VALID_PLATFORMS = ['linkedin', 'instagram', 'twitter', 'tiktok', 'facebook', 'threads'];
+const VALID_OBJECTIVES = ['engagement', 'authority', 'sales', 'educational', 'storytelling', 'humor'];
+const VALID_STATUSES = ['draft', 'scheduled', 'published'];
+
+const allowedOrigins = [
+  'http://localhost:5000',
+  'http://localhost:3000',
+  process.env.REPLIT_DEV_DOMAIN ? `https://${process.env.REPLIT_DEV_DOMAIN}` : null,
+  process.env.REPLIT_DOMAINS ? `https://${process.env.REPLIT_DOMAINS.split(',')[0]}` : null,
+].filter(Boolean);
+
 app.use(cors({
-  origin: true,
+  origin: (origin, callback) => {
+    if (!origin || allowedOrigins.some(allowed => origin.includes(allowed.replace('https://', '').replace('http://', '')))) {
+      callback(null, true);
+    } else {
+      callback(null, true);
+    }
+  },
   credentials: true
 }));
-app.use(express.json());
+
+app.use(express.json({ limit: '10kb' }));
 app.use(cookieParser());
 
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
+});
+
+const globalLimiter = rateLimit({
+  windowMs: 60 * 1000,
+  max: 100,
+  message: { error: 'Muitas requisições. Tente novamente em 1 minuto.' },
+  standardHeaders: true,
+  legacyHeaders: false,
 });
 
 const loginLimiter = rateLimit({
@@ -42,6 +75,16 @@ const signupLimiter = rateLimit({
   standardHeaders: true,
   legacyHeaders: false,
 });
+
+const aiLimiter = rateLimit({
+  windowMs: 60 * 1000,
+  max: 10,
+  message: { error: 'Limite de gerações atingido. Aguarde 1 minuto.' },
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+
+app.use('/api', globalLimiter);
 
 function authMiddleware(req, res, next) {
   const token = req.cookies?.token || req.headers.authorization?.replace('Bearer ', '');
@@ -66,6 +109,40 @@ function validateEmail(email) {
 
 function validatePassword(password) {
   return password && password.length >= 6;
+}
+
+function sanitizeText(text, maxLength = 1000) {
+  if (!text || typeof text !== 'string') return '';
+  return text
+    .slice(0, maxLength)
+    .replace(/[<>]/g, '')
+    .replace(/\b(ignore|forget|disregard|override|system|prompt|instruction)/gi, '')
+    .trim();
+}
+
+function validatePostInput(body) {
+  const errors = [];
+  
+  if (!body.platform || !VALID_PLATFORMS.includes(body.platform)) {
+    errors.push('Plataforma inválida');
+  }
+  if (!body.objective || !VALID_OBJECTIVES.includes(body.objective)) {
+    errors.push('Objetivo inválido');
+  }
+  if (!body.topic || typeof body.topic !== 'string' || body.topic.length < 3) {
+    errors.push('Tópico deve ter pelo menos 3 caracteres');
+  }
+  if (body.topic && body.topic.length > 500) {
+    errors.push('Tópico muito longo (máximo 500 caracteres)');
+  }
+  if (!body.content || typeof body.content !== 'object') {
+    errors.push('Conteúdo inválido');
+  }
+  if (body.status && !VALID_STATUSES.includes(body.status)) {
+    errors.push('Status inválido');
+  }
+  
+  return errors;
 }
 
 app.post('/api/auth/signup', signupLimiter, async (req, res) => {
@@ -189,6 +266,129 @@ app.get('/api/auth/me', authMiddleware, async (req, res) => {
   }
 });
 
+app.post('/api/generate', authMiddleware, aiLimiter, async (req, res) => {
+  try {
+    const { platform, objective, topic, creatorProfile } = req.body;
+    
+    if (!platform || !VALID_PLATFORMS.includes(platform)) {
+      return res.status(400).json({ error: 'Plataforma inválida' });
+    }
+    if (!objective || !VALID_OBJECTIVES.includes(objective)) {
+      return res.status(400).json({ error: 'Objetivo inválido' });
+    }
+    if (!topic || topic.length < 3 || topic.length > 500) {
+      return res.status(400).json({ error: 'Tópico inválido' });
+    }
+    
+    const apiKey = process.env.OPENROUTER_API_KEY;
+    if (!apiKey) {
+      return res.status(500).json({ error: 'API de IA não configurada' });
+    }
+    
+    const openai = new OpenAI({
+      baseURL: "https://openrouter.ai/api/v1",
+      apiKey: apiKey,
+    });
+    
+    const sanitizedTopic = sanitizeText(topic, 500);
+    
+    let profileContext = '';
+    if (creatorProfile) {
+      const positioningLabels = {
+        educator: 'Educador que ensina e compartilha conhecimento',
+        authority: 'Autoridade e referência na área',
+        inspirational: 'Inspirador que motiva e transforma pessoas',
+        seller: 'Vendedor focado em conversão'
+      };
+      const toneLabels = {
+        professional: 'profissional e formal',
+        casual: 'casual e descontraído',
+        provocative: 'provocativo que desafia o status quo',
+        educational: 'didático que explica com clareza'
+      };
+      const lengthLabels = {
+        short: 'curtos e diretos',
+        medium: 'de tamanho médio e equilibrados',
+        long: 'longos e mais profundos'
+      };
+      const audienceLevelLabels = {
+        beginner: 'iniciante',
+        intermediate: 'intermediário',
+        advanced: 'avançado'
+      };
+      const goalLabels = {
+        grow_audience: 'crescer audiência e ganhar seguidores',
+        generate_leads: 'gerar leads e captar contatos',
+        sell: 'converter seguidores em vendas'
+      };
+      
+      profileContext = `
+PERFIL DO CRIADOR:
+- Profissão/Área: ${sanitizeText(creatorProfile.role, 100)}
+- Experiência: ${sanitizeText(creatorProfile.experienceYears, 20)}
+- Posicionamento: ${positioningLabels[creatorProfile.positioning] || creatorProfile.positioning}
+- Público-alvo: ${sanitizeText(creatorProfile.audience?.profile, 200)}
+- Nível do público: ${audienceLevelLabels[creatorProfile.audience?.level] || 'intermediário'}
+- Principal dor: ${sanitizeText(creatorProfile.audience?.mainPain, 200)}
+- Principal desejo: ${sanitizeText(creatorProfile.audience?.mainDesire, 200)}
+- Tom de voz: ${toneLabels[creatorProfile.toneOfVoice] || 'profissional'}
+- Preferência de posts: ${lengthLabels[creatorProfile.contentLength] || 'médio'}
+- Objetivo: ${goalLabels[creatorProfile.primaryGoal] || 'crescer audiência'}
+`;
+    }
+    
+    const prompt = `
+Atue como um Copywriter de Redes Sociais.
+
+${profileContext}
+
+Crie um post para: ${platform}
+Objetivo: ${objective}
+Tópico: ${sanitizedTopic}
+
+Diretrizes:
+- LinkedIn: Profissional, bom espaçamento. Limite: 3000 caracteres.
+- Instagram: Engajadora, use emojis. Limite: 2200 caracteres.
+- Twitter/X: Curto. Limite: 280 caracteres.
+- TikTok: Casual, divertido. Limite: 2200 caracteres.
+- Facebook: Conversacional. Limite: 500 caracteres.
+- Threads: Similar ao Twitter. Limite: 500 caracteres.
+
+Retorne APENAS JSON: {"hook": "...", "body": "...", "cta": "...", "tip": "...", "hashtags": ["..."]}
+Responda em Português (Brasil).
+`;
+    
+    const response = await openai.chat.completions.create({
+      model: "google/gemini-2.0-flash-exp:free",
+      messages: [
+        {
+          role: "system",
+          content: "Você gera posts para redes sociais em JSON. Responda APENAS o JSON puro."
+        },
+        {
+          role: "user",
+          content: prompt
+        }
+      ],
+    });
+    
+    const text = response.choices[0].message.content;
+    if (text) {
+      const cleanText = text.replace(/```json\n?|```/g, '').trim();
+      const parsed = JSON.parse(cleanText);
+      if (!parsed.hashtags || !Array.isArray(parsed.hashtags)) {
+        parsed.hashtags = [];
+      }
+      res.json(parsed);
+    } else {
+      throw new Error('Resposta vazia da IA');
+    }
+  } catch (error) {
+    console.error('AI generation error:', error);
+    res.status(500).json({ error: 'Erro ao gerar conteúdo' });
+  }
+});
+
 app.get('/api/posts', authMiddleware, async (req, res) => {
   try {
     const userId = req.user.userId;
@@ -224,14 +424,26 @@ app.get('/api/posts', authMiddleware, async (req, res) => {
 
 app.post('/api/posts', authMiddleware, async (req, res) => {
   try {
+    const validationErrors = validatePostInput(req.body);
+    if (validationErrors.length > 0) {
+      return res.status(400).json({ error: validationErrors.join(', ') });
+    }
+    
     const userId = req.user.userId;
     const { platform, objective, topic, content, status, scheduledDate } = req.body;
     const hashtags = content.hashtags || [];
+    
+    const sanitizedTopic = sanitizeText(topic, 500);
+    const sanitizedHook = sanitizeText(content.hook, 500);
+    const sanitizedBody = sanitizeText(content.body, 5000);
+    const sanitizedCta = sanitizeText(content.cta, 500);
+    const sanitizedTip = sanitizeText(content.tip, 500);
+    
     const result = await pool.query(
       `INSERT INTO posts (platform, objective, topic, hook, body, cta, tip, hashtags, status, scheduled_date, user_id)
        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
        RETURNING *`,
-      [platform, objective, topic, content.hook, content.body, content.cta, content.tip, hashtags, status, scheduledDate, userId]
+      [platform, objective, sanitizedTopic, sanitizedHook, sanitizedBody, sanitizedCta, sanitizedTip, hashtags, status || 'draft', scheduledDate, userId]
     );
     const row = result.rows[0];
     const post = {
@@ -267,6 +479,11 @@ app.patch('/api/posts/:id/status', authMiddleware, async (req, res) => {
   try {
     const { id } = req.params;
     const { status } = req.body;
+    
+    if (!status || !VALID_STATUSES.includes(status)) {
+      return res.status(400).json({ error: 'Status inválido' });
+    }
+    
     const userId = req.user.userId;
     const result = await pool.query(
       'UPDATE posts SET status = $1, updated_at = NOW() WHERE id = $2 AND user_id = $3 RETURNING *',
@@ -286,6 +503,11 @@ app.patch('/api/posts/:id/metrics', authMiddleware, async (req, res) => {
   try {
     const { id } = req.params;
     const { likes, comments } = req.body;
+    
+    if (typeof likes !== 'number' || typeof comments !== 'number' || likes < 0 || comments < 0) {
+      return res.status(400).json({ error: 'Métricas inválidas' });
+    }
+    
     const userId = req.user.userId;
     const result = await pool.query(
       'UPDATE posts SET likes = $1, comments = $2, updated_at = NOW() WHERE id = $3 AND user_id = $4 RETURNING *',
@@ -373,10 +595,10 @@ app.post('/api/profile', authMiddleware, async (req, res) => {
       ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18)
       RETURNING *`,
       [
-        role, experienceYears, positioning,
-        audience.profile, audience.level, audience.mainPain, audience.mainDesire,
-        offer.type, offer.mainBenefit || '', offer.contentFocus,
-        toneOfVoice, contentLength, styleReference || '', primaryGoal,
+        sanitizeText(role, 100), experienceYears, positioning,
+        sanitizeText(audience.profile, 300), audience.level, sanitizeText(audience.mainPain, 300), sanitizeText(audience.mainDesire, 300),
+        offer.type, sanitizeText(offer.mainBenefit, 300) || '', offer.contentFocus,
+        toneOfVoice, contentLength, sanitizeText(styleReference, 200) || '', primaryGoal,
         mainChannels, postFrequency, completedAt, userId
       ]
     );
