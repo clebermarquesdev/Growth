@@ -66,18 +66,17 @@ export const generatePostContent = async (
 
   try {
     const model = ai.getGenerativeModel({ 
-      model: modelName,
-      generationConfig: {
-        responseMimeType: "application/json",
-      }
+      model: "gemini-pro"
     });
 
     const result = await model.generateContent(prompt);
     const response = await result.response;
-    const text = response.text();
+    let text = response.text();
+    
+    // Clean up potential markdown code blocks
+    text = text.replace(/```json\n?|```/g, '').trim();
 
     if (text) {
-      // Direct parse since we requested application/json
       return JSON.parse(text) as GeneratedContentResponse;
     }
     
