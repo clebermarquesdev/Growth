@@ -1,0 +1,244 @@
+PROMPT – Funcionalidade de Onboarding Inteligente para Criadores
+(Creator Profiling for Content Personalization)
+🎯 PAPEL DA IA
+
+Você atuará como:
+
+Product Manager (UX-driven)
+
+Especialista em Copywriting e Storytelling
+
+Especialista em LLM Prompt Engineering
+
+UX Researcher focado em onboarding
+
+Seu objetivo é projetar uma pesquisa de onboarding que colete o mínimo de informações necessárias, mas maximize a personalização do conteúdo gerado pela IA.
+
+🧩 OBJETIVO DA FUNCIONALIDADE
+
+Criar um onboarding guiado para criadores, onde o usuário fornece informações estratégicas sobre:
+
+Quem ele é
+
+O que ele vende / comunica
+
+Para quem ele fala
+
+Como ele quer se posicionar
+
+Essas informações devem ser estruturadas e reutilizáveis, servindo como contexto fixo (Creator Profile) para todas as gerações de conteúdo.
+
+🔍 PRINCÍPIO-CHAVE
+
+Cada pergunta só pode existir se mudar significativamente a qualidade do post gerado.
+
+Evitar:
+
+Perguntas genéricas
+
+Questionários longos
+
+Linguagem técnica
+
+🧠 ESTRUTURA DO ONBOARDING (EM ETAPAS)
+🟦 Etapa 1 – Identidade do Criador (Quem é você?)
+
+Objetivo: entender autoridade, contexto e linguagem natural.
+
+Perguntas:
+
+Como você se define profissionalmente?
+(ex: fundador de SaaS, social media, criador de conteúdo fitness)
+
+Há quanto tempo atua nessa área?
+
+Você se posiciona mais como:
+
+Educador
+
+Autoridade
+
+Inspirador
+
+Vendedor
+
+🟦 Etapa 2 – Público-Alvo (Para quem você fala?)
+
+Objetivo: ajustar dor, linguagem e CTA.
+
+Perguntas:
+
+Quem é seu público principal?
+
+Nível do público:
+
+Iniciante
+
+Intermediário
+
+Avançado
+
+Principal dor do seu público hoje?
+
+Principal desejo ou objetivo do público?
+
+🟦 Etapa 3 – Produto / Oferta (O que você vende ou promove?)
+
+Objetivo: alinhar conteúdo com conversão futura.
+
+Perguntas:
+
+Você vende algo atualmente?
+
+Produto
+
+Serviço
+
+Conteúdo gratuito
+
+Qual o principal resultado que sua oferta entrega?
+
+Seu conteúdo hoje é mais focado em:
+
+Autoridade
+
+Relacionamento
+
+Venda
+
+🟦 Etapa 4 – Tom de Voz e Estilo
+
+Objetivo: evitar posts genéricos e desalinhados.
+
+Perguntas:
+
+Seu tom de voz é mais:
+
+Profissional
+
+Casual
+
+Provocativo
+
+Educacional
+
+Você prefere posts:
+
+Curtos e diretos
+
+Médios
+
+Mais profundos
+
+Existe alguém cujo estilo você gosta? (opcional)
+
+🟦 Etapa 5 – Objetivos de Conteúdo
+
+Objetivo: guiar a IA sobre prioridade real.
+
+Perguntas:
+
+Qual é seu principal objetivo com conteúdo hoje?
+
+Crescer audiência
+
+Gerar leads
+
+Vender
+
+Em quais redes você quer focar primeiro?
+
+Com que frequência pretende postar?
+
+🧠 MODELAGEM DOS DADOS (CREATOR PROFILE)
+
+Peça para a IA estruturar as respostas em um objeto do tipo:
+
+{
+  "creator_profile": {
+    "role": "",
+    "experience_level": "",
+    "positioning": "",
+    "audience": {
+      "profile": "",
+      "level": "",
+      "main_pain": "",
+      "main_desire": ""
+    },
+    "offer": {
+      "type": "",
+      "main_benefit": "",
+      "content_focus": ""
+    },
+    "tone_of_voice": "",
+    "content_style": "",
+    "primary_goal": "",
+    "main_channels": []
+  }
+}
+
+🧠 USO DO PERFIL NA GERAÇÃO DE CONTEÚDO (OBRIGATÓRIO)
+
+Toda geração de conteúdo DEVE:
+
+Carregar o creator_profile como contexto fixo
+
+Ajustar:
+
+Linguagem
+
+Profundidade
+
+CTA
+
+Evitar frases genéricas que não façam sentido para o perfil
+
+Exemplo de instrução para a LLM:
+
+“Gere este post considerando rigorosamente o perfil do criador fornecido. Não assuma informações não declaradas.”
+
+🎨 DIRETRIZES DE UX DO ONBOARDING
+
+Máx. 5 etapas
+
+Progresso visível
+
+Linguagem simples
+
+Exemplos rápidos em cada pergunta
+
+Possibilidade de editar depois
+
+🎯 CRITÉRIOS DE SUCESSO DA FUNCIONALIDADE
+
+≥ 80% dos usuários completam o onboarding
+
+Redução perceptível de posts genéricos
+
+Feedback qualitativo positivo sobre “posts mais com a minha cara”
+
+Aumento da taxa de edição mínima dos posts gerados
+
+🚫 ANTI-PADRÕES (NÃO FAZER)
+
+Onboarding longo demais
+
+Perguntas técnicas de marketing
+
+Pedir dados que não impactam o texto
+
+Obrigar o usuário a responder tudo
+
+📦 SAÍDA ESPERADA DA IA
+
+Ao aplicar este prompt, a IA deve entregar:
+
+Estrutura completa do onboarding
+
+Perguntas com justificativa
+
+Modelo de dados do Creator Profile
+
+Regras claras de uso do perfil na LLM
+
+Diretrizes de UX

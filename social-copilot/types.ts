@@ -65,3 +65,40 @@ export interface GeneratedContentResponse {
   tip: string;
   hashtags?: string[];
 }
+
+export type CreatorPositioning = 'educator' | 'authority' | 'inspirational' | 'seller';
+export type AudienceLevel = 'beginner' | 'intermediate' | 'advanced';
+export type OfferType = 'product' | 'service' | 'free_content' | 'none';
+export type ContentFocus = 'authority' | 'relationship' | 'sales';
+export type ToneOfVoice = 'professional' | 'casual' | 'provocative' | 'educational';
+export type ContentLength = 'short' | 'medium' | 'long';
+export type ContentGoal = 'grow_audience' | 'generate_leads' | 'sell';
+export type PostFrequency = 'daily' | 'few_times_week' | 'weekly' | 'sporadic';
+
+export interface CreatorAudience {
+  profile: string;
+  level: AudienceLevel;
+  mainPain: string;
+  mainDesire: string;
+}
+
+export interface CreatorOffer {
+  type: OfferType;
+  mainBenefit: string;
+  contentFocus: ContentFocus;
+}
+
+export interface CreatorProfile {
+  role: string;
+  experienceYears: string;
+  positioning: CreatorPositioning;
+  audience: CreatorAudience;
+  offer: CreatorOffer;
+  toneOfVoice: ToneOfVoice;
+  contentLength: ContentLength;
+  styleReference?: string;
+  primaryGoal: ContentGoal;
+  mainChannels: Platform[];
+  postFrequency: PostFrequency;
+  completedAt?: number;
+}
