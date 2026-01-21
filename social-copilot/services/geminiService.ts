@@ -27,10 +27,10 @@ const responseSchema = {
 // Initialize Gemini Client
 const getAIClient = () => {
   // @ts-ignore
-  const apiKey = import.meta.env.VITE_GOOGLE_API_KEY;
+  const apiKey = import.meta.env.VITE_GOOGLE_API_KEY || (typeof process !== 'undefined' && process.env.VITE_GOOGLE_API_KEY);
   
   if (!apiKey) {
-    console.error("No API key found in import.meta.env.VITE_GOOGLE_API_KEY");
+    console.error("Chave de API não encontrada em VITE_GOOGLE_API_KEY");
     return null;
   }
   return new GoogleGenerativeAI(apiKey);
@@ -66,15 +66,15 @@ export const generatePostContent = async (
 
   try {
     const model = ai.getGenerativeModel({ 
-      model: "gemini-pro"
+      model: modelName,
+      generationConfig: {
+        responseMimeType: "application/json",
+      }
     });
 
     const result = await model.generateContent(prompt);
     const response = await result.response;
-    let text = response.text();
-    
-    // Clean up potential markdown code blocks
-    text = text.replace(/```json\n?|```/g, '').trim();
+    const text = response.text();
 
     if (text) {
       return JSON.parse(text) as GeneratedContentResponse;

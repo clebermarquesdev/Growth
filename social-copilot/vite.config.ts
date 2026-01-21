@@ -12,8 +12,9 @@ export default defineConfig(({ mode }) => {
       },
       plugins: [react()],
       define: {
-        'import.meta.env.VITE_GOOGLE_API_KEY': JSON.stringify(env.GOOGLE_API_KEY),
-        'process.env.GOOGLE_API_KEY': JSON.stringify(env.GOOGLE_API_KEY)
+        'import.meta.env.VITE_GOOGLE_API_KEY': JSON.stringify(env.GOOGLE_API_KEY_2 || env.GOOGLE_API_KEY),
+        'process.env.GOOGLE_API_KEY': JSON.stringify(env.GOOGLE_API_KEY_2 || env.GOOGLE_API_KEY),
+        'process.env.VITE_GOOGLE_API_KEY': JSON.stringify(env.GOOGLE_API_KEY_2 || env.GOOGLE_API_KEY)
       },
       resolve: {
         alias: {
