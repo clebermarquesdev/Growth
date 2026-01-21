@@ -25,7 +25,7 @@ const Layout: React.FC<LayoutProps> = ({ children, currentView, onChangeView }) 
             <PenTool className="w-6 h-6" />
             <span>Social Copilot</span>
           </div>
-          <p className="text-xs text-slate-500 mt-1">AI Marketing Assistant</p>
+          <p className="text-xs text-slate-500 mt-1">Assistente de Marketing IA</p>
         </div>
 
         <nav className="flex-1 p-4 space-y-1">
@@ -51,10 +51,10 @@ const Layout: React.FC<LayoutProps> = ({ children, currentView, onChangeView }) 
 
         <div className="p-4 border-t border-slate-100">
           <div className="bg-gradient-to-br from-indigo-500 to-purple-600 rounded-lg p-4 text-white">
-            <h4 className="font-semibold text-sm mb-1">Pro Plan</h4>
-            <p className="text-xs opacity-80 mb-3">Unlock unlimited AI generations.</p>
+            <h4 className="font-semibold text-sm mb-1">Plano Pro</h4>
+            <p className="text-xs opacity-80 mb-3">Desbloqueie gerações de IA ilimitadas.</p>
             <button className="w-full py-1.5 bg-white/20 hover:bg-white/30 rounded text-xs font-medium transition-colors">
-              Upgrade
+              Fazer Upgrade
             </button>
           </div>
         </div>

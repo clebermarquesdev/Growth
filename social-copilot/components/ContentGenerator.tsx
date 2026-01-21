@@ -26,7 +26,7 @@ const ContentGenerator: React.FC<ContentGeneratorProps> = ({ onSave }) => {
       setGeneratedContent(result);
       setEditedContent(result);
     } catch (e) {
-      setError("Failed to generate content. Please check your API key and try again.");
+      setError("Falha ao gerar conteúdo. Por favor, verifique sua chave de API e tente novamente.");
     } finally {
       setIsGenerating(false);
     }
@@ -57,7 +57,7 @@ const ContentGenerator: React.FC<ContentGeneratorProps> = ({ onSave }) => {
     setTopic('');
     setGeneratedContent(null);
     setEditedContent(null);
-    alert('Post saved to Drafts!');
+    alert('Post salvo nos Rascunhos!');
   };
 
   return (

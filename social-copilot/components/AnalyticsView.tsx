@@ -93,7 +93,7 @@ const AnalyticsView: React.FC<AnalyticsViewProps> = ({ posts, onUpdateMetrics })
 
       {/* Chart */}
       <div className="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
-        <h3 className="text-lg font-bold text-slate-900 mb-6">Recent Post Engagement</h3>
+        <h3 className="text-lg font-bold text-slate-900 mb-6">Engajamento Recente dos Posts</h3>
         <div className="h-64 w-full">
            {publishedPosts.length > 0 ? (
              <ResponsiveContainer width="100%" height="100%">
@@ -102,12 +102,12 @@ const AnalyticsView: React.FC<AnalyticsViewProps> = ({ posts, onUpdateMetrics })
                  <XAxis dataKey="name" fontSize={12} tickLine={false} axisLine={false} />
                  <YAxis fontSize={12} tickLine={false} axisLine={false} />
                  <Tooltip cursor={{fill: '#f1f5f9'}} contentStyle={{borderRadius: '8px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)'}} />
-                 <Bar dataKey="likes" fill="#4f46e5" radius={[4, 4, 0, 0]} />
-                 <Bar dataKey="comments" fill="#9333ea" radius={[4, 4, 0, 0]} />
+                 <Bar dataKey="likes" name="Curtidas" fill="#4f46e5" radius={[4, 4, 0, 0]} />
+                 <Bar dataKey="comments" name="Comentários" fill="#9333ea" radius={[4, 4, 0, 0]} />
                </BarChart>
              </ResponsiveContainer>
            ) : (
-             <div className="h-full flex items-center justify-center text-slate-400 text-sm">No data available. Publish posts to see charts.</div>
+             <div className="h-full flex items-center justify-center text-slate-400 text-sm">Nenhum dado disponível. Publique posts para ver os gráficos.</div>
            )}
         </div>
       </div>
@@ -115,18 +115,18 @@ const AnalyticsView: React.FC<AnalyticsViewProps> = ({ posts, onUpdateMetrics })
       {/* Data Entry Table */}
       <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
         <div className="px-6 py-4 border-b border-slate-100 flex justify-between items-center">
-           <h3 className="font-bold text-slate-900">Manual Metrics Entry</h3>
-           <span className="text-xs text-slate-500 flex items-center gap-1"><AlertCircle className="w-3 h-3"/> Update stats after 24h</span>
+           <h3 className="font-bold text-slate-900">Entrada Manual de Métricas</h3>
+           <span className="text-xs text-slate-500 flex items-center gap-1"><AlertCircle className="w-3 h-3"/> Atualize as estatísticas após 24h</span>
         </div>
         <table className="w-full text-sm text-left">
           <thead className="text-xs text-slate-500 uppercase bg-slate-50">
             <tr>
-              <th className="px-6 py-3">Post Topic</th>
-              <th className="px-6 py-3">Platform</th>
-              <th className="px-6 py-3">Date</th>
-              <th className="px-6 py-3">Likes</th>
-              <th className="px-6 py-3">Comments</th>
-              <th className="px-6 py-3">Action</th>
+              <th className="px-6 py-3">Tópico do Post</th>
+              <th className="px-6 py-3">Plataforma</th>
+              <th className="px-6 py-3">Data</th>
+              <th className="px-6 py-3">Curtidas</th>
+              <th className="px-6 py-3">Comentários</th>
+              <th className="px-6 py-3">Ação</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-slate-100">
@@ -155,7 +155,7 @@ const AnalyticsView: React.FC<AnalyticsViewProps> = ({ posts, onUpdateMetrics })
                       />
                     </td>
                     <td className="px-6 py-4">
-                       <button onClick={saveMetrics} className="text-indigo-600 font-medium hover:underline">Save</button>
+                       <button onClick={saveMetrics} className="text-indigo-600 font-medium hover:underline">Salvar</button>
                     </td>
                   </>
                 ) : (
@@ -174,7 +174,7 @@ const AnalyticsView: React.FC<AnalyticsViewProps> = ({ posts, onUpdateMetrics })
             {publishedPosts.length === 0 && (
                <tr>
                  <td colSpan={6} className="px-6 py-8 text-center text-slate-500">
-                   No published posts to track yet.
+                   Nenhum post publicado para acompanhar ainda.
                  </td>
                </tr>
             )}
