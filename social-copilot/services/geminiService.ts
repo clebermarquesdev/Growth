@@ -65,20 +65,18 @@ export const generatePostContent = async (
   try {
     const model = ai.getGenerativeModel({
       model: modelName,
-      generationConfig: {
-        responseMimeType: "application/json",
-        // @ts-ignore
-        responseSchema: responseSchema,
-        temperature: 0.7,
-      },
     });
 
     const result = await model.generateContent(prompt);
     const response = await result.response;
     const text = response.text();
 
-    if (text) {
-      return JSON.parse(text) as GeneratedContentResponse;
+    // Extrair JSON do texto caso venha com markdown
+    const jsonMatch = text.match(/\{[\s\S]*\}/);
+    const jsonString = jsonMatch ? jsonMatch[0] : text;
+
+    if (jsonString) {
+      return JSON.parse(jsonString) as GeneratedContentResponse;
     }
     
     throw new Error("No content generated");
