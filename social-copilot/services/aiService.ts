@@ -51,7 +51,7 @@ export const generatePostContent = async (
 
   try {
     const response = await openai.chat.completions.create({
-      model: "google/gemini-2.0-flash-exp:free",
+      model: "mistralai/mistral-7b-instruct:free",
       messages: [
         {
           role: "system",
@@ -61,14 +61,15 @@ export const generatePostContent = async (
           role: "user",
           content: prompt
         }
-      ],
-      response_format: { type: "json_object" }
+      ]
     });
 
     const text = response.choices[0].message.content;
 
     if (text) {
-      return JSON.parse(text) as GeneratedContentResponse;
+      // Basic cleaning in case the model returns markdown code blocks
+      const cleanText = text.replace(/```json\n?|```/g, '').trim();
+      return JSON.parse(cleanText) as GeneratedContentResponse;
     }
     
     throw new Error("Não foi possível gerar conteúdo.");
