@@ -26,8 +26,11 @@ const responseSchema: Schema = {
 
 // Initialize Gemini Client
 const getAIClient = () => {
-  const apiKey = process.env.API_KEY || process.env.GEMINI_API_KEY || process.env.GOOGLE_API_KEY;
+  // Try to get key from process.env (Vite define) or from a direct check if available
+  const apiKey = (typeof process !== 'undefined' && process.env ? (process.env.API_KEY || process.env.GEMINI_API_KEY || process.env.GOOGLE_API_KEY) : null);
+  
   if (!apiKey) {
+    console.error("No API key found in environment variables");
     return null;
   }
   return new GoogleGenAI({ apiKey });
