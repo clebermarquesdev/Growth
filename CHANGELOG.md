@@ -4,6 +4,34 @@ Todas as mudanças notáveis neste projeto serão documentadas neste arquivo.
 
 O formato é baseado em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.0/).
 
+## [1.3.0] - 2026-01-21
+
+### Adicionado
+
+#### Persistência em Banco de Dados PostgreSQL
+- Tabela `posts` para armazenar todos os posts gerados
+- Tabela `creator_profiles` para armazenar o perfil do criador
+- API REST completa no backend:
+  - `GET /api/posts` - listar todos os posts
+  - `POST /api/posts` - criar novo post
+  - `PATCH /api/posts/:id/status` - atualizar status do post
+  - `PATCH /api/posts/:id/metrics` - atualizar métricas do post
+  - `DELETE /api/posts/:id` - excluir post
+  - `GET /api/profile` - buscar perfil do criador
+  - `POST /api/profile` - salvar/atualizar perfil do criador
+
+### Alterado
+- Perfil do criador agora é salvo no banco de dados (antes: localStorage)
+- Posts são persistidos permanentemente no PostgreSQL
+- Hashtags são salvas junto com os posts
+
+### Técnico
+- Integração com PostgreSQL via `pg` driver
+- Proxy configurado no Vite para encaminhar requisições `/api` ao backend
+- Servidor Express rodando na porta 3001
+
+---
+
 ## [1.2.0] - 2026-01-21
 
 ### Adicionado
