@@ -47,6 +47,7 @@ export const generatePostContent = async (
     - Twitter/X: Punchy, short, thread-style if body is long.
     
     Return the result in JSON format with a Hook, Body, CTA, and a strategic Tip.
+    The response must be in Portuguese (Brazil) as the primary audience is Brazilian.
   `;
 
   try {
