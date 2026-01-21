@@ -4,7 +4,7 @@ import { Platform, Objective, GeneratedContentResponse } from "../types";
 // Initialize OpenRouter Client (OpenAI compatible)
 const getOpenRouterClient = () => {
   // @ts-ignore
-  const apiKey = import.meta.env.VITE_OPENROUTER_API_KEY;
+  const apiKey = import.meta.env.VITE_OPENROUTER_API_KEY || (typeof process !== 'undefined' && process.env.VITE_OPENROUTER_API_KEY);
   
   if (!apiKey) {
     console.error("OpenRouter API key not found");

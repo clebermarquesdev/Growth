@@ -1,6 +1,6 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Post, Platform, PostStatus } from '../types';
-import { Calendar as CalendarIcon, MoreHorizontal, Instagram, Linkedin, Twitter, Check } from 'lucide-react';
+import { Calendar as CalendarIcon, MoreHorizontal, Instagram, Linkedin, Twitter, Check, Eye, X } from 'lucide-react';
 
 interface CalendarViewProps {
   posts: Post[];
@@ -8,6 +8,8 @@ interface CalendarViewProps {
 }
 
 const CalendarView: React.FC<CalendarViewProps> = ({ posts, onUpdateStatus }) => {
+  const [selectedPost, setSelectedPost] = useState<Post | null>(null);
+
   // Helper to get platform icon
   const getIcon = (p: Platform) => {
     switch (p) {
@@ -63,7 +65,7 @@ const CalendarView: React.FC<CalendarViewProps> = ({ posts, onUpdateStatus }) =>
                        <span className="text-lg font-bold text-slate-800">{new Date(post.scheduledDate).getDate()}</span>
                     </div>
                     
-                    <div>
+                    <div className="cursor-pointer" onClick={() => setSelectedPost(post)}>
                       <div className="flex items-center gap-2 mb-1">
                         {getIcon(post.platform)}
                         <span className="text-sm font-medium text-slate-900">{post.topic}</span>
@@ -76,6 +78,12 @@ const CalendarView: React.FC<CalendarViewProps> = ({ posts, onUpdateStatus }) =>
                   </div>
 
                   <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                    <button 
+                      onClick={() => setSelectedPost(post)}
+                      className="p-2 text-slate-600 hover:bg-slate-100 rounded-lg text-xs font-medium flex items-center gap-1"
+                    >
+                      <Eye className="w-4 h-4" /> Visualizar
+                    </button>
                     {post.status !== PostStatus.PUBLISHED && (
                       <button 
                         onClick={() => onUpdateStatus(post.id, PostStatus.PUBLISHED)}
@@ -85,9 +93,6 @@ const CalendarView: React.FC<CalendarViewProps> = ({ posts, onUpdateStatus }) =>
                         <Check className="w-4 h-4" /> Marcar Publicado
                       </button>
                     )}
-                    <button className="p-2 text-slate-400 hover:text-slate-600 rounded-lg">
-                      <MoreHorizontal className="w-5 h-5" />
-                    </button>
                   </div>
                 </div>
               </div>
@@ -95,6 +100,76 @@ const CalendarView: React.FC<CalendarViewProps> = ({ posts, onUpdateStatus }) =>
           </div>
         )}
       </div>
+
+      {/* Modal de Visualização */}
+      {selectedPost && (
+        <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-2xl shadow-xl w-full max-w-2xl overflow-hidden flex flex-col max-h-[90vh]">
+            <div className="p-6 border-b border-slate-100 flex justify-between items-center">
+              <div className="flex items-center gap-3">
+                {getIcon(selectedPost.platform)}
+                <div>
+                  <h3 className="text-lg font-bold text-slate-900">{selectedPost.topic}</h3>
+                  <p className="text-xs text-slate-500">Agendado para {new Date(selectedPost.scheduledDate).toLocaleDateString()}</p>
+                </div>
+              </div>
+              <button onClick={() => setSelectedPost(null)} className="p-2 hover:bg-slate-100 rounded-full text-slate-400">
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+            
+            <div className="p-8 space-y-6 overflow-y-auto">
+              <div>
+                <label className="text-xs font-bold text-slate-400 uppercase tracking-wider">Hook (Gancho)</label>
+                <div className="mt-2 text-xl font-bold text-slate-900 leading-tight">
+                  {selectedPost.content.hook}
+                </div>
+              </div>
+              
+              <div>
+                <label className="text-xs font-bold text-slate-400 uppercase tracking-wider">Corpo do Post</label>
+                <div className="mt-2 text-slate-700 whitespace-pre-wrap leading-relaxed">
+                  {selectedPost.content.body}
+                </div>
+              </div>
+
+              <div>
+                <label className="text-xs font-bold text-slate-400 uppercase tracking-wider">CTA (Chamada para Ação)</label>
+                <div className="mt-2 text-indigo-600 font-semibold text-lg">
+                  {selectedPost.content.cta}
+                </div>
+              </div>
+
+              {selectedPost.content.tip && (
+                <div className="bg-indigo-50 rounded-xl p-4 border border-indigo-100">
+                  <div className="text-xs font-bold text-indigo-400 uppercase tracking-wider mb-1">Dica Estratégica da IA</div>
+                  <p className="text-sm text-indigo-700 italic">{selectedPost.content.tip}</p>
+                </div>
+              )}
+            </div>
+
+            <div className="p-4 bg-slate-50 border-t border-slate-100 flex justify-end gap-3">
+              <button 
+                onClick={() => setSelectedPost(null)}
+                className="px-6 py-2 bg-white border border-slate-200 text-slate-600 rounded-lg font-medium hover:bg-slate-100 transition-colors"
+              >
+                Fechar
+              </button>
+              {selectedPost.status !== PostStatus.PUBLISHED && (
+                <button 
+                  onClick={() => {
+                    onUpdateStatus(selectedPost.id, PostStatus.PUBLISHED);
+                    setSelectedPost(null);
+                  }}
+                  className="px-6 py-2 bg-indigo-600 text-white rounded-lg font-medium hover:bg-indigo-700 transition-colors shadow-sm"
+                >
+                  Marcar como Publicado
+                </button>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
