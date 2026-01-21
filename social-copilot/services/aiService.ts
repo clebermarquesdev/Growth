@@ -61,7 +61,13 @@ export const generatePostContent = async (
           role: "user",
           content: prompt
         }
-      ]
+      ],
+      extra_body: {
+        "provider": {
+          "order": ["Google", "Mistral", "Meta"],
+          "allow_fallbacks": true
+        }
+      }
     });
 
     const text = response.choices[0].message.content;
