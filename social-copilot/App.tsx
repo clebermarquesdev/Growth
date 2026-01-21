@@ -4,13 +4,31 @@ import Dashboard from './components/Dashboard';
 import ContentGenerator from './components/ContentGenerator';
 import CalendarView from './components/CalendarView';
 import AnalyticsView from './components/AnalyticsView';
-import { ViewState, Post, PostStatus } from './types';
+import Onboarding from './components/Onboarding';
+import { ViewState, Post, PostStatus, CreatorProfile } from './types';
 import { fetchPosts, createPost, updatePostStatus, updatePostMetrics } from './services/apiService';
+
+const PROFILE_STORAGE_KEY = 'social_copilot_creator_profile';
 
 const App: React.FC = () => {
   const [currentView, setCurrentView] = useState<ViewState>('dashboard');
   const [posts, setPosts] = useState<Post[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [creatorProfile, setCreatorProfile] = useState<CreatorProfile | null>(null);
+  const [showOnboarding, setShowOnboarding] = useState(false);
+
+  useEffect(() => {
+    const savedProfile = localStorage.getItem(PROFILE_STORAGE_KEY);
+    if (savedProfile) {
+      try {
+        setCreatorProfile(JSON.parse(savedProfile));
+      } catch {
+        setShowOnboarding(true);
+      }
+    } else {
+      setShowOnboarding(true);
+    }
+  }, []);
 
   useEffect(() => {
     const loadPosts = async () => {
@@ -25,6 +43,16 @@ const App: React.FC = () => {
     };
     loadPosts();
   }, []);
+
+  const handleOnboardingComplete = (profile: CreatorProfile) => {
+    setCreatorProfile(profile);
+    localStorage.setItem(PROFILE_STORAGE_KEY, JSON.stringify(profile));
+    setShowOnboarding(false);
+  };
+
+  const handleEditProfile = () => {
+    setShowOnboarding(true);
+  };
 
   const handleSavePost = async (post: Post) => {
     try {
@@ -63,6 +91,15 @@ const App: React.FC = () => {
     }
   };
 
+  if (showOnboarding) {
+    return (
+      <Onboarding 
+        onComplete={handleOnboardingComplete} 
+        existingProfile={creatorProfile}
+      />
+    );
+  }
+
   const renderView = () => {
     switch (currentView) {
       case 'dashboard':
@@ -74,7 +111,12 @@ const App: React.FC = () => {
           />
         );
       case 'generator':
-        return <ContentGenerator onSave={handleSavePost} />;
+        return (
+          <ContentGenerator 
+            onSave={handleSavePost} 
+            creatorProfile={creatorProfile}
+          />
+        );
       case 'calendar':
         return <CalendarView posts={posts} onUpdateStatus={handleUpdateStatus} />;
       case 'analytics':
@@ -85,7 +127,12 @@ const App: React.FC = () => {
   };
 
   return (
-    <Layout currentView={currentView} onChangeView={setCurrentView}>
+    <Layout 
+      currentView={currentView} 
+      onChangeView={setCurrentView}
+      creatorProfile={creatorProfile}
+      onEditProfile={handleEditProfile}
+    >
       {renderView()}
     </Layout>
   );

@@ -1,10 +1,11 @@
 import React, { useState, useMemo } from 'react';
-import { Wand2, Save, RotateCcw, Copy, CheckCircle2, Loader2, Info, Hash, FileText, Sparkles } from 'lucide-react';
-import { Platform, Objective, GeneratedContentResponse, Post, PostStatus, ContentTemplate } from '../types';
+import { Wand2, Save, RotateCcw, Copy, CheckCircle2, Loader2, Info, Hash, FileText, Sparkles, User } from 'lucide-react';
+import { Platform, Objective, GeneratedContentResponse, Post, PostStatus, ContentTemplate, CreatorProfile } from '../types';
 import { generatePostContent } from '../services/aiService';
 
 interface ContentGeneratorProps {
   onSave: (post: Post) => void;
+  creatorProfile?: CreatorProfile | null;
 }
 
 const TEMPLATES: ContentTemplate[] = [
@@ -75,8 +76,10 @@ const CHAR_LIMITS: Record<Platform, number> = {
   [Platform.THREADS]: 500
 };
 
-const ContentGenerator: React.FC<ContentGeneratorProps> = ({ onSave }) => {
-  const [platform, setPlatform] = useState<Platform>(Platform.LINKEDIN);
+const ContentGenerator: React.FC<ContentGeneratorProps> = ({ onSave, creatorProfile }) => {
+  const [platform, setPlatform] = useState<Platform>(
+    creatorProfile?.mainChannels?.[0] || Platform.LINKEDIN
+  );
   const [objective, setObjective] = useState<Objective>(Objective.AUTHORITY);
   const [topic, setTopic] = useState('');
   const [selectedTemplate, setSelectedTemplate] = useState<string | null>(null);
@@ -108,7 +111,7 @@ const ContentGenerator: React.FC<ContentGeneratorProps> = ({ onSave }) => {
     setIsGenerating(true);
     setError(null);
     try {
-      const result = await generatePostContent(platform, objective, topic);
+      const result = await generatePostContent(platform, objective, topic, creatorProfile || undefined);
       setGeneratedContent(result);
       setEditedContent(result);
     } catch (e) {
