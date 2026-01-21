@@ -1,6 +1,29 @@
 import { GoogleGenAI, Type, Schema } from "@google/genai";
 import { Platform, Objective, GeneratedContentResponse } from "../types";
 
+const responseSchema: Schema = {
+  type: Type.OBJECT,
+  properties: {
+    hook: {
+      type: Type.STRING,
+      description: "The attention-grabbing opening line or headline.",
+    },
+    body: {
+      type: Type.STRING,
+      description: "The main content of the post. Use appropriate emojis and spacing.",
+    },
+    cta: {
+      type: Type.STRING,
+      description: "A clear Call to Action.",
+    },
+    tip: {
+      type: Type.STRING,
+      description: "A short strategic insight explaining why this structure works for the chosen objective.",
+    },
+  },
+  required: ["hook", "body", "cta", "tip"],
+};
+
 // Initialize Gemini Client
 const getAIClient = () => {
   const apiKey = process.env.API_KEY || process.env.GEMINI_API_KEY;
