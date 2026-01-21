@@ -26,7 +26,7 @@ const responseSchema: Schema = {
 
 // Initialize Gemini Client
 const getAIClient = () => {
-  const apiKey = process.env.API_KEY || process.env.GEMINI_API_KEY;
+  const apiKey = process.env.API_KEY || process.env.GEMINI_API_KEY || process.env.GOOGLE_API_KEY;
   if (!apiKey) {
     return null;
   }
