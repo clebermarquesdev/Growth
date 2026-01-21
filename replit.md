@@ -34,6 +34,14 @@ social-copilot/
 - Build with `npm run build`
 
 ## Recent Changes
+- January 21, 2026: Melhorias no gerador de conteúdo
+  - Adicionadas 3 novas plataformas: TikTok, Facebook, Threads
+  - Adicionados 3 novos objetivos: Educativo, Storytelling, Humor
+  - Adicionados 8 templates prontos (Lista de Dicas, História Pessoal, etc.)
+  - Geração automática de hashtags via IA
+  - Botão de copiar conteúdo e hashtags
+  - Contador de caracteres com limite por plataforma
+  - Fallback para clipboard em contextos não-seguros
 - January 21, 2026: Initial setup for Replit environment
   - Configured Vite to use port 5000 with allowedHosts enabled
   - Set up deployment configuration
