@@ -51,11 +51,11 @@ export const generatePostContent = async (
 
   try {
     const response = await openai.chat.completions.create({
-      model: "google/gemini-flash-1.5-8b",
+      model: "google/gemini-2.0-flash-exp:free",
       messages: [
         {
           role: "system",
-          content: "Você é um assistente que gera posts para redes sociais em formato JSON. Responda APENAS o JSON puro, sem explicações ou blocos de código markdown."
+          content: "Você é um assistente que gera posts para redes sociais em formato JSON. Responda APENAS o JSON puro, sem explicações ou blocos de código markdown. Siga EXATAMENTE a estrutura: {\"hook\": \"...\", \"body\": \"...\", \"cta\": \"...\", \"tip\": \"...\"}"
         },
         {
           role: "user",
