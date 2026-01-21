@@ -1,0 +1,195 @@
+PROMPT — Implementação de Autenticação Própria (Free, No Domain, No Vendor Lock-in)
+🎯 PAPEL DA IA
+
+Você atuará como:
+
+Arquiteto de Software (SaaS)
+
+Especialista em Segurança Web
+
+Backend Engineer
+
+Product Engineer focado em MicroSaaS
+
+Seu objetivo é implementar um sistema de autenticação completo, seguro, gratuito e que não exija domínio pago, nem serviços proprietários de autenticação.
+
+🧩 REQUISITOS OBRIGATÓRIOS
+
+A solução DEVE:
+
+❌ NÃO usar Replit Auth
+
+❌ NÃO usar Clerk
+
+❌ NÃO exigir domínio pago
+
+❌ NÃO exigir plano pago de terceiros
+
+✅ Funcionar em:
+
+localhost
+
+IP público
+
+subdomínios gratuitos (ex: *.repl.co, *.onrender.com, *.vercel.app)
+
+✅ Ser self-hosted
+
+✅ Ser segura (hash de senha, tokens, proteção básica)
+
+🧠 ESTRATÉGIA DE AUTENTICAÇÃO (BASE)
+
+Implemente Auth por Email + Senha, com:
+
+Cadastro
+
+Login
+
+Sessão persistente
+
+Logout
+
+Proteção de rotas
+
+Sem OAuth no MVP (Google, etc.).
+
+🧱 STACK SUGERIDA (PODE AJUSTAR SE NECESSÁRIO)
+
+Backend: Node.js + Express (ou equivalente)
+
+Banco: PostgreSQL / SQLite / MongoDB
+
+Hash: bcrypt
+
+Sessão: JWT (stateless)
+
+Cookies: HttpOnly (se possível)
+
+⚠️ Não usar soluções SaaS de auth externas.
+
+🔐 FLUXO DE AUTENTICAÇÃO
+1️⃣ Cadastro (Sign Up)
+
+Email
+
+Senha
+
+Confirmação de senha
+
+Regras:
+
+Senha com hash (bcrypt)
+
+Validação básica de email
+
+Impedir emails duplicados
+
+2️⃣ Login
+
+Email + Senha
+
+Verificação de hash
+
+Geração de JWT
+
+JWT deve conter:
+
+user_id
+
+email
+
+issued_at
+
+expiração
+
+3️⃣ Persistência de Sessão
+
+Armazenar JWT:
+
+Preferencialmente em cookie HttpOnly
+
+Alternativa: localStorage (explicar tradeoff)
+
+4️⃣ Proteção de Rotas
+
+Middleware que:
+
+Verifica token
+
+Bloqueia acesso não autenticado
+
+Injeta user no request
+
+5️⃣ Logout
+
+Remover token do cliente
+
+Invalidar sessão local
+
+🛡️ SEGURANÇA MÍNIMA OBRIGATÓRIA
+
+Implementar:
+
+Hash de senha com bcrypt
+
+JWT com expiração curta
+
+Variáveis de ambiente para secrets
+
+Rate limit básico em login
+
+Mensagens de erro genéricas (anti-enumeração)
+
+🧪 TESTES ESSENCIAIS
+
+Cadastro com email válido
+
+Login correto
+
+Login inválido
+
+Acesso a rota protegida sem token
+
+Logout funcionando
+
+📦 ESTRUTURA DE PASTAS SUGERIDA
+/auth
+  ├─ auth.controller.ts
+  ├─ auth.routes.ts
+  ├─ auth.service.ts
+  ├─ auth.middleware.ts
+/models
+  └─ user.model.ts
+/utils
+  └─ jwt.ts
+
+🧠 CONSIDERAÇÕES IMPORTANTES
+
+NÃO implementar verificação de email no MVP
+
+NÃO usar cookies Secure-only (HTTPS obrigatório) se estiver em ambiente local
+
+Preparar o código para futura adição de OAuth
+
+🎯 SAÍDA ESPERADA DA IA
+
+Ao final, você deve entregar:
+
+Arquitetura da autenticação
+
+Código funcional de:
+
+Signup
+
+Login
+
+Middleware de proteção
+
+Instruções claras para rodar localmente
+
+Observações de segurança
+
+🧠 NOTA FINAL (DECISÃO DE PRODUTO)
+
+Este sistema é suficiente, seguro e escalável para MVP.
+OAuth e serviços externos só devem entrar depois da validação.
