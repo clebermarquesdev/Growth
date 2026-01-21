@@ -52,8 +52,8 @@ const AnalyticsView: React.FC<AnalyticsViewProps> = ({ posts, onUpdateMetrics })
   return (
     <div className="space-y-8">
       <div>
-        <h2 className="text-2xl font-bold text-slate-900">Performance Analytics</h2>
-        <p className="text-slate-500">Track your growth and engagement manually.</p>
+        <h2 className="text-2xl font-bold text-slate-900">Análise de Desempenho</h2>
+        <p className="text-slate-500">Acompanhe seu crescimento e engajamento manualmente.</p>
       </div>
 
       {/* Stats Cards */}
@@ -63,7 +63,7 @@ const AnalyticsView: React.FC<AnalyticsViewProps> = ({ posts, onUpdateMetrics })
             <div className="p-2 bg-pink-100 rounded-lg text-pink-600">
               <Heart className="w-5 h-5" />
             </div>
-            <span className="text-sm font-medium text-slate-500">Total Likes</span>
+            <span className="text-sm font-medium text-slate-500">Total de Curtidas</span>
           </div>
           <p className="text-3xl font-bold text-slate-900">{totalLikes}</p>
         </div>
@@ -73,7 +73,7 @@ const AnalyticsView: React.FC<AnalyticsViewProps> = ({ posts, onUpdateMetrics })
             <div className="p-2 bg-blue-100 rounded-lg text-blue-600">
               <MessageCircle className="w-5 h-5" />
             </div>
-            <span className="text-sm font-medium text-slate-500">Total Comments</span>
+            <span className="text-sm font-medium text-slate-500">Total de Comentários</span>
           </div>
           <p className="text-3xl font-bold text-slate-900">{totalComments}</p>
         </div>
@@ -81,12 +81,12 @@ const AnalyticsView: React.FC<AnalyticsViewProps> = ({ posts, onUpdateMetrics })
         <div className="bg-white p-6 rounded-xl border border-slate-200 shadow-sm bg-gradient-to-br from-indigo-600 to-indigo-700 text-white">
           <div className="flex items-center gap-3 mb-2">
              <TrendingUp className="w-5 h-5 opacity-80" />
-            <span className="text-sm font-medium opacity-80">Top Insight</span>
+            <span className="text-sm font-medium opacity-80">Principal Insight</span>
           </div>
           <p className="text-lg font-medium leading-relaxed">
             {publishedPosts.length > 2 
-             ? `Your ${bestPlatform} posts are generating 20% more engagement on average. Keep it up!` 
-             : "Publish at least 3 posts to unlock insights."}
+             ? `Seus posts no ${bestPlatform} estão gerando 20% mais engajamento em média. Continue assim!` 
+             : "Publique pelo menos 3 posts para desbloquear insights."}
           </p>
         </div>
       </div>

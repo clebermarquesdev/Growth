@@ -33,13 +33,13 @@ const CalendarView: React.FC<CalendarViewProps> = ({ posts, onUpdateStatus }) =>
     <div className="space-y-6">
       <div className="flex justify-between items-end">
         <div>
-           <h2 className="text-2xl font-bold text-slate-900">Content Calendar</h2>
-           <p className="text-slate-500">Review your scheduled and published content.</p>
+           <h2 className="text-2xl font-bold text-slate-900">Calendário de Conteúdo</h2>
+           <p className="text-slate-500">Revise seu conteúdo agendado e publicado.</p>
         </div>
         <div className="flex gap-2">
-           <span className="flex items-center gap-1 text-xs text-slate-500"><div className="w-2 h-2 rounded-full bg-slate-300"></div> Draft</span>
-           <span className="flex items-center gap-1 text-xs text-slate-500"><div className="w-2 h-2 rounded-full bg-blue-300"></div> Scheduled</span>
-           <span className="flex items-center gap-1 text-xs text-slate-500"><div className="w-2 h-2 rounded-full bg-green-300"></div> Published</span>
+           <span className="flex items-center gap-1 text-xs text-slate-500"><div className="w-2 h-2 rounded-full bg-slate-300"></div> Rascunho</span>
+           <span className="flex items-center gap-1 text-xs text-slate-500"><div className="w-2 h-2 rounded-full bg-blue-300"></div> Agendado</span>
+           <span className="flex items-center gap-1 text-xs text-slate-500"><div className="w-2 h-2 rounded-full bg-green-300"></div> Publicado</span>
         </div>
       </div>
 
@@ -49,8 +49,8 @@ const CalendarView: React.FC<CalendarViewProps> = ({ posts, onUpdateStatus }) =>
             <div className="w-16 h-16 bg-slate-50 rounded-full flex items-center justify-center mb-4">
               <CalendarIcon className="w-8 h-8 text-slate-300" />
             </div>
-            <h3 className="text-lg font-medium text-slate-900">No posts yet</h3>
-            <p className="text-slate-500 mb-6 max-w-sm">Use the AI Creator to generate your first post and fill up your calendar.</p>
+            <h3 className="text-lg font-medium text-slate-900">Nenhum post ainda</h3>
+            <p className="text-slate-500 mb-6 max-w-sm">Use o Criador IA para gerar seu primeiro post e preencher seu calendário.</p>
           </div>
         ) : (
           <div className="divide-y divide-slate-100">
@@ -80,9 +80,9 @@ const CalendarView: React.FC<CalendarViewProps> = ({ posts, onUpdateStatus }) =>
                       <button 
                         onClick={() => onUpdateStatus(post.id, PostStatus.PUBLISHED)}
                         className="p-2 text-green-600 hover:bg-green-50 rounded-lg text-xs font-medium flex items-center gap-1"
-                        title="Mark as Published"
+                        title="Marcar como Publicado"
                       >
-                        <Check className="w-4 h-4" /> Mark Published
+                        <Check className="w-4 h-4" /> Marcar Publicado
                       </button>
                     )}
                     <button className="p-2 text-slate-400 hover:text-slate-600 rounded-lg">

@@ -10,10 +10,10 @@ interface LayoutProps {
 
 const Layout: React.FC<LayoutProps> = ({ children, currentView, onChangeView }) => {
   const navItems = [
-    { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
-    { id: 'generator', label: 'AI Creator', icon: Zap },
-    { id: 'calendar', label: 'Calendar', icon: CalendarIcon },
-    { id: 'analytics', label: 'Analytics', icon: BarChart2 },
+    { id: 'dashboard', label: 'Painel', icon: LayoutDashboard },
+    { id: 'generator', label: 'Criador IA', icon: Zap },
+    { id: 'calendar', label: 'Calendário', icon: CalendarIcon },
+    { id: 'analytics', label: 'Métricas', icon: BarChart2 },
   ];
 
   return (

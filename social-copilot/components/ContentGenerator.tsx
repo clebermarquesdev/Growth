@@ -63,8 +63,8 @@ const ContentGenerator: React.FC<ContentGeneratorProps> = ({ onSave }) => {
   return (
     <div className="space-y-6">
       <div className="flex flex-col gap-2">
-        <h2 className="text-2xl font-bold text-slate-900">AI Content Creator</h2>
-        <p className="text-slate-500">Generate high-converting posts in seconds.</p>
+        <h2 className="text-2xl font-bold text-slate-900">Gerador de Conteúdo com IA</h2>
+        <p className="text-slate-500">Crie posts de alta conversão em segundos.</p>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
@@ -72,7 +72,7 @@ const ContentGenerator: React.FC<ContentGeneratorProps> = ({ onSave }) => {
         <div className="space-y-6">
           <div className="bg-white p-6 rounded-xl border border-slate-200 shadow-sm space-y-4">
             <div>
-              <label className="block text-sm font-medium text-slate-700 mb-1">Platform</label>
+              <label className="block text-sm font-medium text-slate-700 mb-1">Plataforma</label>
               <div className="grid grid-cols-3 gap-2">
                 {Object.values(Platform).map((p) => (
                   <button
@@ -91,7 +91,7 @@ const ContentGenerator: React.FC<ContentGeneratorProps> = ({ onSave }) => {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-slate-700 mb-1">Objective</label>
+              <label className="block text-sm font-medium text-slate-700 mb-1">Objetivo</label>
               <select
                 value={objective}
                 onChange={(e) => setObjective(e.target.value as Objective)}
@@ -104,11 +104,11 @@ const ContentGenerator: React.FC<ContentGeneratorProps> = ({ onSave }) => {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-slate-700 mb-1">Topic / Idea</label>
+              <label className="block text-sm font-medium text-slate-700 mb-1">Tópico / Ideia</label>
               <textarea
                 value={topic}
                 onChange={(e) => setTopic(e.target.value)}
-                placeholder="e.g. 5 tips for remote work productivity..."
+                placeholder="ex: 5 dicas de produtividade no home office..."
                 className="w-full p-3 h-32 bg-white border border-slate-200 rounded-lg text-sm text-slate-900 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none resize-none"
               />
             </div>
@@ -122,11 +122,11 @@ const ContentGenerator: React.FC<ContentGeneratorProps> = ({ onSave }) => {
             >
               {isGenerating ? (
                 <>
-                  <Loader2 className="w-5 h-5 animate-spin" /> Generating...
+                  <Loader2 className="w-5 h-5 animate-spin" /> Gerando...
                 </>
               ) : (
                 <>
-                  <Wand2 className="w-5 h-5" /> Generate Post
+                  <Wand2 className="w-5 h-5" /> Gerar Post
                 </>
               )}
             </button>
@@ -138,13 +138,13 @@ const ContentGenerator: React.FC<ContentGeneratorProps> = ({ onSave }) => {
           {!editedContent ? (
             <div className="h-full min-h-[400px] flex flex-col items-center justify-center border-2 border-dashed border-slate-200 rounded-xl bg-slate-50/50 text-slate-400">
               <Wand2 className="w-12 h-12 mb-3 opacity-20" />
-              <p>Your generated content will appear here.</p>
+              <p>Seu conteúdo gerado aparecerá aqui.</p>
             </div>
           ) : (
             <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden flex flex-col h-full">
               <div className="p-4 border-b border-slate-100 bg-indigo-50/50 flex justify-between items-center">
                 <span className="text-xs font-semibold text-indigo-800 uppercase tracking-wider flex items-center gap-1">
-                  <Info className="w-3 h-3" /> AI Insight
+                  <Info className="w-3 h-3" /> Insight da IA
                 </span>
                 <span className="text-xs text-indigo-600 italic truncate max-w-[250px]">
                   {generatedContent?.tip}
@@ -185,13 +185,13 @@ const ContentGenerator: React.FC<ContentGeneratorProps> = ({ onSave }) => {
                    onClick={handleGenerate} 
                    className="flex-1 py-2 text-slate-600 bg-white border border-slate-200 hover:bg-slate-50 rounded-lg text-sm font-medium flex items-center justify-center gap-2"
                 >
-                  <RotateCcw className="w-4 h-4" /> Regenerate
+                  <RotateCcw className="w-4 h-4" /> Gerar novamente
                 </button>
                 <button 
                   onClick={handleSave}
                   className="flex-[2] py-2 text-white bg-slate-900 hover:bg-slate-800 rounded-lg text-sm font-medium flex items-center justify-center gap-2 shadow-sm"
                 >
-                  <Save className="w-4 h-4" /> Save to Calendar
+                  <Save className="w-4 h-4" /> Salvar no Calendário
                 </button>
               </div>
             </div>
