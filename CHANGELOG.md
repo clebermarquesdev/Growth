@@ -4,6 +4,34 @@ Todas as mudanças notáveis neste projeto serão documentadas neste arquivo.
 
 O formato é baseado em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.0/).
 
+## [1.4.0] - 2026-01-21
+
+### Adicionado
+
+#### Sistema de Autenticação Próprio
+- Cadastro com email e senha (hash bcrypt)
+- Login com geração de JWT
+- Sessão persistente via cookie HttpOnly + localStorage fallback
+- Logout com remoção de token
+- Rate limiting para proteção contra ataques
+- Middleware de proteção de rotas autenticadas
+- Interface de login/cadastro em português
+
+### Segurança
+- Hash de senha com bcrypt (10 salt rounds)
+- JWT com expiração de 7 dias
+- Rate limit: 5 tentativas de login por 15 min
+- Rate limit: 5 tentativas de cadastro por hora
+- Mensagens de erro genéricas (anti-enumeração)
+
+### Técnico
+- Tabela `users` no PostgreSQL
+- Dependências: bcrypt, jsonwebtoken, express-rate-limit, cookie-parser
+- Componente `AuthPage.tsx` para login/signup
+- Serviço `authService.ts` para gerenciamento de autenticação
+
+---
+
 ## [1.3.0] - 2026-01-21
 
 ### Adicionado

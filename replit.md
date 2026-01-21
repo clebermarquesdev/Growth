@@ -52,6 +52,10 @@ social-copilot/
 - Run with workflow "Start application"
 
 ## Recent Changes
+- January 21, 2026: Sistema de Autenticação (v1.4.0)
+  - Login/cadastro com email e senha
+  - Hash bcrypt e JWT para sessões seguras
+  - Rate limiting para proteção contra ataques
 - January 21, 2026: Integração com PostgreSQL (v1.3.0)
   - Posts e perfil do criador salvos no banco de dados
   - API REST completa para CRUD de posts e perfil

@@ -5,8 +5,10 @@ import ContentGenerator from './components/ContentGenerator';
 import CalendarView from './components/CalendarView';
 import AnalyticsView from './components/AnalyticsView';
 import Onboarding from './components/Onboarding';
+import AuthPage from './components/AuthPage';
 import { ViewState, Post, PostStatus, CreatorProfile } from './types';
 import { fetchPosts, createPost, updatePostStatus, updatePostMetrics, fetchProfile, saveProfile } from './services/apiService';
+import { getCurrentUser, logout, User } from './services/authService';
 
 const App: React.FC = () => {
   const [currentView, setCurrentView] = useState<ViewState>('dashboard');
@@ -14,8 +16,26 @@ const App: React.FC = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [creatorProfile, setCreatorProfile] = useState<CreatorProfile | null>(null);
   const [showOnboarding, setShowOnboarding] = useState(false);
+  const [user, setUser] = useState<User | null>(null);
+  const [authLoading, setAuthLoading] = useState(true);
 
   useEffect(() => {
+    const checkAuth = async () => {
+      try {
+        const currentUser = await getCurrentUser();
+        setUser(currentUser);
+      } catch (error) {
+        console.error('Auth check failed:', error);
+      } finally {
+        setAuthLoading(false);
+      }
+    };
+    checkAuth();
+  }, []);
+
+  useEffect(() => {
+    if (!user) return;
+    
     const loadProfile = async () => {
       try {
         const profile = await fetchProfile();
@@ -30,9 +50,11 @@ const App: React.FC = () => {
       }
     };
     loadProfile();
-  }, []);
+  }, [user]);
 
   useEffect(() => {
+    if (!user) return;
+    
     const loadPosts = async () => {
       try {
         const data = await fetchPosts();
@@ -44,7 +66,20 @@ const App: React.FC = () => {
       }
     };
     loadPosts();
-  }, []);
+  }, [user]);
+
+  const handleAuthSuccess = (loggedInUser: User) => {
+    setUser(loggedInUser);
+  };
+
+  const handleLogout = async () => {
+    await logout();
+    setUser(null);
+    setCreatorProfile(null);
+    setPosts([]);
+    setShowOnboarding(false);
+    setCurrentView('dashboard');
+  };
 
   const handleOnboardingComplete = async (profile: CreatorProfile) => {
     try {
@@ -99,6 +134,18 @@ const App: React.FC = () => {
     }
   };
 
+  if (authLoading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-indigo-900 via-purple-900 to-indigo-800 flex items-center justify-center">
+        <div className="text-white text-xl">Carregando...</div>
+      </div>
+    );
+  }
+
+  if (!user) {
+    return <AuthPage onAuthSuccess={handleAuthSuccess} />;
+  }
+
   if (showOnboarding) {
     return (
       <Onboarding 
@@ -140,6 +187,8 @@ const App: React.FC = () => {
       onChangeView={setCurrentView}
       creatorProfile={creatorProfile}
       onEditProfile={handleEditProfile}
+      user={user}
+      onLogout={handleLogout}
     >
       {renderView()}
     </Layout>

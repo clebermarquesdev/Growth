@@ -1,6 +1,7 @@
 import React from 'react';
-import { LayoutDashboard, PenTool, Calendar as CalendarIcon, BarChart2, Zap, Settings, User } from 'lucide-react';
+import { LayoutDashboard, PenTool, Calendar as CalendarIcon, BarChart2, Zap, Settings, User, LogOut } from 'lucide-react';
 import { ViewState, CreatorProfile } from '../types';
+import { User as AuthUser } from '../services/authService';
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -8,9 +9,11 @@ interface LayoutProps {
   onChangeView: (view: ViewState) => void;
   creatorProfile?: CreatorProfile | null;
   onEditProfile?: () => void;
+  user?: AuthUser | null;
+  onLogout?: () => void;
 }
 
-const Layout: React.FC<LayoutProps> = ({ children, currentView, onChangeView, creatorProfile, onEditProfile }) => {
+const Layout: React.FC<LayoutProps> = ({ children, currentView, onChangeView, creatorProfile, onEditProfile, user, onLogout }) => {
   const navItems = [
     { id: 'dashboard', label: 'Painel', icon: LayoutDashboard },
     { id: 'generator', label: 'Criador IA', icon: Zap },
@@ -100,15 +103,27 @@ const Layout: React.FC<LayoutProps> = ({ children, currentView, onChangeView, cr
           </div>
         )}
 
-        <div className="p-4 border-t border-slate-100">
-          <div className="bg-gradient-to-br from-indigo-500 to-purple-600 rounded-lg p-4 text-white">
-            <h4 className="font-semibold text-sm mb-1">Plano Pro</h4>
-            <p className="text-xs opacity-80 mb-3">Desbloqueie gerações de IA ilimitadas.</p>
-            <button className="w-full py-1.5 bg-white/20 hover:bg-white/30 rounded text-xs font-medium transition-colors">
-              Fazer Upgrade
-            </button>
+        {user && (
+          <div className="p-4 border-t border-slate-100">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2 min-w-0">
+                <div className="w-8 h-8 bg-indigo-100 rounded-full flex items-center justify-center flex-shrink-0">
+                  <User className="w-4 h-4 text-indigo-600" />
+                </div>
+                <span className="text-sm text-slate-600 truncate">{user.email}</span>
+              </div>
+              {onLogout && (
+                <button
+                  onClick={onLogout}
+                  className="p-2 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors flex-shrink-0"
+                  title="Sair"
+                >
+                  <LogOut className="w-4 h-4" />
+                </button>
+              )}
+            </div>
           </div>
-        </div>
+        )}
       </aside>
 
       <div className="md:hidden fixed top-0 left-0 right-0 h-16 bg-white border-b border-slate-200 flex items-center justify-between px-4 z-20">
@@ -116,15 +131,20 @@ const Layout: React.FC<LayoutProps> = ({ children, currentView, onChangeView, cr
             <PenTool className="w-5 h-5" />
             <span>Social Copilot</span>
          </div>
-         <div className="flex gap-4">
+         <div className="flex gap-3">
              {navItems.map((item) => (
                  <button key={item.id} onClick={() => onChangeView(item.id as ViewState)} className={`${currentView === item.id ? 'text-indigo-600' : 'text-slate-400'}`}>
-                    <item.icon className="w-6 h-6" />
+                    <item.icon className="w-5 h-5" />
                  </button>
              ))}
              {onEditProfile && (
                <button onClick={onEditProfile} className="text-slate-400">
-                 <Settings className="w-6 h-6" />
+                 <Settings className="w-5 h-5" />
+               </button>
+             )}
+             {onLogout && (
+               <button onClick={onLogout} className="text-slate-400 hover:text-red-500">
+                 <LogOut className="w-5 h-5" />
                </button>
              )}
          </div>
