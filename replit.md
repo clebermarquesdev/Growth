@@ -38,8 +38,10 @@ social-copilot/
 ```
 
 ## Database Schema
+- `users` - User accounts with email and password hash
 - `posts` - Stores all generated posts with content, status, and metrics
 - `creator_profiles` - Stores creator profile for AI personalization
+- `saved_templates` - User's favorite/saved content templates
 
 ## Environment Variables
 - `DATABASE_URL` - PostgreSQL connection string (auto-configured)
@@ -52,6 +54,11 @@ social-copilot/
 - Run with workflow "Start application"
 
 ## Recent Changes
+- January 21, 2026: Melhorias UX e Favoritos (v1.6.0)
+  - Tailwind CSS via PostCSS (removido CDN)
+  - Sistema de favoritos para salvar templates
+  - Tela de gerenciamento de favoritos
+  - Botão "Favoritar" no gerador de conteúdo
 - January 21, 2026: Auditoria de Segurança Completa (v1.5.0)
   - API de IA movida para backend (/api/generate) - API key protegida
   - JWT_SECRET obrigatório (servidor não inicia sem)

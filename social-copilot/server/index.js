@@ -645,6 +645,102 @@ app.post('/api/profile', authMiddleware, async (req, res) => {
   }
 });
 
+app.get('/api/templates', authMiddleware, async (req, res) => {
+  try {
+    const userId = req.user.userId;
+    const result = await pool.query(
+      'SELECT * FROM saved_templates WHERE user_id = $1 ORDER BY created_at DESC',
+      [userId]
+    );
+    const templates = result.rows.map(row => ({
+      id: row.id.toString(),
+      name: row.name,
+      platform: row.platform,
+      objective: row.objective,
+      topic: row.topic || '',
+      content: {
+        hook: row.hook || '',
+        body: row.body || '',
+        cta: row.cta || '',
+        tip: row.tip || '',
+        hashtags: row.hashtags || []
+      },
+      createdAt: new Date(row.created_at).getTime()
+    }));
+    res.json(templates);
+  } catch (error) {
+    console.error('Error fetching templates:', error);
+    res.status(500).json({ error: 'Failed to fetch templates' });
+  }
+});
+
+app.post('/api/templates', authMiddleware, async (req, res) => {
+  try {
+    const userId = req.user.userId;
+    const { name, platform, objective, topic, content } = req.body;
+    
+    if (!name || name.length < 1 || name.length > 200) {
+      return res.status(400).json({ error: 'Nome inválido' });
+    }
+    if (!platform || !VALID_PLATFORMS.includes(platform)) {
+      return res.status(400).json({ error: 'Plataforma inválida' });
+    }
+    if (!objective || !VALID_OBJECTIVES.includes(objective)) {
+      return res.status(400).json({ error: 'Objetivo inválido' });
+    }
+    
+    const result = await pool.query(
+      `INSERT INTO saved_templates (user_id, name, platform, objective, topic, hook, body, cta, tip, hashtags)
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
+       RETURNING *`,
+      [
+        userId,
+        sanitizeText(name, 200),
+        platform,
+        objective,
+        sanitizeText(topic, 500),
+        sanitizeText(content?.hook, 500),
+        sanitizeText(content?.body, 5000),
+        sanitizeText(content?.cta, 500),
+        sanitizeText(content?.tip, 500),
+        content?.hashtags || []
+      ]
+    );
+    
+    const row = result.rows[0];
+    res.status(201).json({
+      id: row.id.toString(),
+      name: row.name,
+      platform: row.platform,
+      objective: row.objective,
+      topic: row.topic || '',
+      content: {
+        hook: row.hook || '',
+        body: row.body || '',
+        cta: row.cta || '',
+        tip: row.tip || '',
+        hashtags: row.hashtags || []
+      },
+      createdAt: new Date(row.created_at).getTime()
+    });
+  } catch (error) {
+    console.error('Error saving template:', error);
+    res.status(500).json({ error: 'Failed to save template' });
+  }
+});
+
+app.delete('/api/templates/:id', authMiddleware, async (req, res) => {
+  try {
+    const { id } = req.params;
+    const userId = req.user.userId;
+    await pool.query('DELETE FROM saved_templates WHERE id = $1 AND user_id = $2', [id, userId]);
+    res.json({ success: true });
+  } catch (error) {
+    console.error('Error deleting template:', error);
+    res.status(500).json({ error: 'Failed to delete template' });
+  }
+});
+
 app.listen(PORT, '0.0.0.0', () => {
   console.log(`Server running on port ${PORT}`);
 });

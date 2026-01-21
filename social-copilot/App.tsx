@@ -4,6 +4,7 @@ import Dashboard from './components/Dashboard';
 import ContentGenerator from './components/ContentGenerator';
 import CalendarView from './components/CalendarView';
 import AnalyticsView from './components/AnalyticsView';
+import FavoritesView from './components/FavoritesView';
 import Onboarding from './components/Onboarding';
 import AuthPage from './components/AuthPage';
 import { ViewState, Post, PostStatus, CreatorProfile } from './types';
@@ -172,6 +173,8 @@ const App: React.FC = () => {
             creatorProfile={creatorProfile}
           />
         );
+      case 'favorites':
+        return <FavoritesView />;
       case 'calendar':
         return <CalendarView posts={posts} onUpdateStatus={handleUpdateStatus} />;
       case 'analytics':

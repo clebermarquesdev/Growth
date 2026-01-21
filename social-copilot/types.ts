@@ -56,7 +56,7 @@ export interface Post {
   createdAt: number;
 }
 
-export type ViewState = 'dashboard' | 'generator' | 'calendar' | 'analytics';
+export type ViewState = 'dashboard' | 'generator' | 'favorites' | 'calendar' | 'analytics';
 
 export interface GeneratedContentResponse {
   hook: string;

@@ -1,7 +1,8 @@
 import React, { useState, useMemo } from 'react';
-import { Wand2, Save, RotateCcw, Copy, CheckCircle2, Loader2, Info, Hash, FileText, Sparkles, User } from 'lucide-react';
+import { Wand2, Save, RotateCcw, Copy, CheckCircle2, Loader2, Info, Hash, FileText, Sparkles, User, Heart, X } from 'lucide-react';
 import { Platform, Objective, GeneratedContentResponse, Post, PostStatus, ContentTemplate, CreatorProfile } from '../types';
 import { generatePostContent } from '../services/aiService';
+import { saveTemplate, SavedTemplate } from '../services/templateService';
 
 interface ContentGeneratorProps {
   onSave: (post: Post) => void;
@@ -89,6 +90,10 @@ const ContentGenerator: React.FC<ContentGeneratorProps> = ({ onSave, creatorProf
   const [error, setError] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
   const [copiedHashtags, setCopiedHashtags] = useState(false);
+  const [showSaveTemplateModal, setShowSaveTemplateModal] = useState(false);
+  const [templateName, setTemplateName] = useState('');
+  const [isSavingTemplate, setIsSavingTemplate] = useState(false);
+  const [templateSaved, setTemplateSaved] = useState(false);
 
   const filteredTemplates = useMemo(() => {
     return TEMPLATES.filter(t => t.platforms.includes(platform));
@@ -170,6 +175,37 @@ const ContentGenerator: React.FC<ContentGeneratorProps> = ({ onSave, creatorProf
       document.body.removeChild(textarea);
       setCopiedHashtags(true);
       setTimeout(() => setCopiedHashtags(false), 2000);
+    }
+  };
+
+  const handleSaveAsTemplate = async () => {
+    if (!editedContent || !templateName.trim()) return;
+    
+    setIsSavingTemplate(true);
+    try {
+      await saveTemplate({
+        name: templateName.trim(),
+        platform,
+        objective,
+        topic,
+        content: {
+          hook: editedContent.hook,
+          body: editedContent.body,
+          cta: editedContent.cta,
+          tip: editedContent.tip || '',
+          hashtags: editedContent.hashtags || []
+        }
+      });
+      setTemplateSaved(true);
+      setTimeout(() => {
+        setShowSaveTemplateModal(false);
+        setTemplateName('');
+        setTemplateSaved(false);
+      }, 1500);
+    } catch (e) {
+      setError('Erro ao salvar template');
+    } finally {
+      setIsSavingTemplate(false);
     }
   };
 
@@ -394,6 +430,12 @@ const ContentGenerator: React.FC<ContentGeneratorProps> = ({ onSave, creatorProf
                   {copied ? 'Copiado!' : 'Copiar'}
                 </button>
                 <button
+                  onClick={() => setShowSaveTemplateModal(true)}
+                  className="py-2 px-4 text-pink-600 bg-white border border-pink-200 hover:bg-pink-50 rounded-lg text-sm font-medium flex items-center justify-center gap-2"
+                >
+                  <Heart className="w-4 h-4" /> Favoritar
+                </button>
+                <button
                    onClick={handleGenerate} 
                    className="py-2 px-4 text-slate-600 bg-white border border-slate-200 hover:bg-slate-50 rounded-lg text-sm font-medium flex items-center justify-center gap-2"
                 >
@@ -410,6 +452,78 @@ const ContentGenerator: React.FC<ContentGeneratorProps> = ({ onSave, creatorProf
           )}
         </div>
       </div>
+
+      {showSaveTemplateModal && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-xl shadow-xl w-full max-w-md mx-4">
+            <div className="p-4 border-b border-slate-100 flex items-center justify-between">
+              <h3 className="text-lg font-semibold text-slate-900 flex items-center gap-2">
+                <Heart className="w-5 h-5 text-pink-500" />
+                Salvar como Favorito
+              </h3>
+              <button
+                onClick={() => {
+                  setShowSaveTemplateModal(false);
+                  setTemplateName('');
+                }}
+                className="p-1 hover:bg-slate-100 rounded-lg transition-colors"
+              >
+                <X className="w-5 h-5 text-slate-400" />
+              </button>
+            </div>
+            <div className="p-4">
+              {templateSaved ? (
+                <div className="text-center py-8">
+                  <CheckCircle2 className="w-12 h-12 text-green-500 mx-auto mb-3" />
+                  <p className="text-lg font-medium text-slate-900">Favorito salvo!</p>
+                </div>
+              ) : (
+                <>
+                  <label className="block text-sm font-medium text-slate-700 mb-2">
+                    Dê um nome para este favorito
+                  </label>
+                  <input
+                    type="text"
+                    value={templateName}
+                    onChange={(e) => setTemplateName(e.target.value)}
+                    placeholder="Ex: Post sobre produtividade"
+                    className="w-full p-3 border border-slate-200 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent"
+                    autoFocus
+                  />
+                  <p className="text-xs text-slate-400 mt-2">
+                    Plataforma: {platform} | Objetivo: {objective}
+                  </p>
+                </>
+              )}
+            </div>
+            {!templateSaved && (
+              <div className="p-4 border-t border-slate-100 flex gap-3">
+                <button
+                  onClick={() => {
+                    setShowSaveTemplateModal(false);
+                    setTemplateName('');
+                  }}
+                  className="flex-1 py-2 text-slate-600 bg-white border border-slate-200 hover:bg-slate-50 rounded-lg text-sm font-medium"
+                >
+                  Cancelar
+                </button>
+                <button
+                  onClick={handleSaveAsTemplate}
+                  disabled={!templateName.trim() || isSavingTemplate}
+                  className="flex-1 py-2 text-white bg-pink-500 hover:bg-pink-600 disabled:bg-pink-300 rounded-lg text-sm font-medium flex items-center justify-center gap-2"
+                >
+                  {isSavingTemplate ? (
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                  ) : (
+                    <Heart className="w-4 h-4" />
+                  )}
+                  Salvar
+                </button>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 };

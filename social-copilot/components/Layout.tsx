@@ -1,5 +1,5 @@
 import React from 'react';
-import { LayoutDashboard, PenTool, Calendar as CalendarIcon, BarChart2, Zap, Settings, User, LogOut } from 'lucide-react';
+import { LayoutDashboard, PenTool, Calendar as CalendarIcon, BarChart2, Zap, Settings, User, LogOut, Heart } from 'lucide-react';
 import { ViewState, CreatorProfile } from '../types';
 import { User as AuthUser } from '../services/authService';
 
@@ -17,6 +17,7 @@ const Layout: React.FC<LayoutProps> = ({ children, currentView, onChangeView, cr
   const navItems = [
     { id: 'dashboard', label: 'Painel', icon: LayoutDashboard },
     { id: 'generator', label: 'Criador IA', icon: Zap },
+    { id: 'favorites', label: 'Favoritos', icon: Heart },
     { id: 'calendar', label: 'Calendário', icon: CalendarIcon },
     { id: 'analytics', label: 'Métricas', icon: BarChart2 },
   ];
