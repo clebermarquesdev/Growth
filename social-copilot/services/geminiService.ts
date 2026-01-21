@@ -27,12 +27,10 @@ const responseSchema = {
 // Initialize Gemini Client
 const getAIClient = () => {
   // @ts-ignore
-  const apiKey = (typeof process !== 'undefined' && process.env) 
-    ? (process.env.GOOGLE_API_KEY || process.env.GEMINI_API_KEY || process.env.API_KEY)
-    : null;
+  const apiKey = import.meta.env.VITE_GOOGLE_API_KEY;
   
   if (!apiKey) {
-    console.error("No API key found in environment variables");
+    console.error("No API key found in import.meta.env.VITE_GOOGLE_API_KEY");
     return null;
   }
   return new GoogleGenerativeAI(apiKey);
