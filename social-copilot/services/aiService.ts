@@ -51,7 +51,7 @@ export const generatePostContent = async (
 
   try {
     const response = await openai.chat.completions.create({
-      model: "mistralai/mistral-7b-instruct:free",
+      model: "google/gemini-flash-1.5-8b",
       messages: [
         {
           role: "system",
