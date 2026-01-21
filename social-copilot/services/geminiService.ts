@@ -20,8 +20,13 @@ const responseSchema = {
       type: "string",
       description: "A short strategic insight explaining why this structure works for the chosen objective.",
     },
+    hashtags: {
+      type: "array",
+      items: { type: "string" },
+      description: "5-8 relevant hashtags for the post, without the # symbol.",
+    },
   },
-  required: ["hook", "body", "cta", "tip"],
+  required: ["hook", "body", "cta", "tip", "hashtags"],
 };
 
 // Initialize Gemini Client
@@ -54,12 +59,23 @@ export const generatePostContent = async (
     Objetivo: ${objective}
     Tópico: ${topic}
     
-    Diretrizes:
-    - LinkedIn: Profissional, mas pessoal, bom espaçamento, tom de autoridade.
-    - Instagram: Legenda focada no visual, engajadora, amigável, use emojis.
-    - Twitter/X: Direto, curto, estilo thread se o corpo for longo.
+    Diretrizes por plataforma:
+    - LinkedIn: Profissional, mas pessoal, bom espaçamento, tom de autoridade. Limite: 3000 caracteres.
+    - Instagram: Legenda focada no visual, engajadora, amigável, use emojis. Limite: 2200 caracteres.
+    - Twitter/X: Direto, curto, estilo thread se o corpo for longo. Limite: 280 caracteres por tweet.
+    - TikTok: Casual, divertido, use gírias e emojis, chame atenção rápido. Limite: 2200 caracteres.
+    - Facebook: Tom conversacional, conte histórias, pergunte opiniões. Limite: 500 caracteres ideal.
+    - Threads: Similar ao Twitter, mas mais conversacional. Limite: 500 caracteres.
     
-    Retorne o resultado estritamente em formato JSON com os campos: hook, body, cta, e tip.
+    Diretrizes por objetivo:
+    - Engajamento: Faça perguntas, peça opiniões, crie debates.
+    - Autoridade: Compartilhe dados, estatísticas, expertise.
+    - Vendas/Leads: Destaque benefícios, urgência, oferta clara.
+    - Educativo: Ensine algo valioso, passo a passo, dicas práticas.
+    - Storytelling: Conte uma história pessoal ou case de sucesso.
+    - Humor/Descontraído: Tom leve, memes, situações engraçadas.
+    
+    Retorne o resultado estritamente em formato JSON com os campos: hook, body, cta, tip, e hashtags (array com 5-8 hashtags relevantes sem o símbolo #).
     Não inclua explicações, apenas o JSON.
     A resposta deve ser em Português (Brasil).
   `;
@@ -69,6 +85,7 @@ export const generatePostContent = async (
       model: modelName,
       generationConfig: {
         responseMimeType: "application/json",
+        responseSchema: responseSchema as any,
       }
     });
 
@@ -77,7 +94,11 @@ export const generatePostContent = async (
     const text = response.text();
 
     if (text) {
-      return JSON.parse(text) as GeneratedContentResponse;
+      const parsed = JSON.parse(text) as GeneratedContentResponse;
+      if (!parsed.hashtags || !Array.isArray(parsed.hashtags)) {
+        parsed.hashtags = [];
+      }
+      return parsed;
     }
     
     throw new Error("No content generated");

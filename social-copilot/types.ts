@@ -1,13 +1,27 @@
 export enum Platform {
   LINKEDIN = 'LinkedIn',
   INSTAGRAM = 'Instagram',
-  TWITTER = 'Twitter/X'
+  TWITTER = 'Twitter/X',
+  TIKTOK = 'TikTok',
+  FACEBOOK = 'Facebook',
+  THREADS = 'Threads'
 }
 
 export enum Objective {
   ENGAGEMENT = 'Engajamento',
   AUTHORITY = 'Autoridade',
-  SALES = 'Vendas/Leads'
+  SALES = 'Vendas/Leads',
+  EDUCATIONAL = 'Educativo',
+  STORYTELLING = 'Storytelling',
+  HUMOR = 'Humor/Descontraído'
+}
+
+export interface ContentTemplate {
+  id: string;
+  name: string;
+  description: string;
+  platforms: Platform[];
+  promptHint: string;
 }
 
 export enum PostStatus {
@@ -49,4 +63,5 @@ export interface GeneratedContentResponse {
   body: string;
   cta: string;
   tip: string;
+  hashtags?: string[];
 }
