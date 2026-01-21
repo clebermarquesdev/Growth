@@ -1,23 +1,23 @@
-import { GoogleGenAI, Type, Schema } from "@google/genai";
+import { GoogleGenerativeAI } from "@google/generative-ai";
 import { Platform, Objective, GeneratedContentResponse } from "../types";
 
-const responseSchema: Schema = {
-  type: Type.OBJECT,
+const responseSchema = {
+  type: "object",
   properties: {
     hook: {
-      type: Type.STRING,
+      type: "string",
       description: "The attention-grabbing opening line or headline.",
     },
     body: {
-      type: Type.STRING,
+      type: "string",
       description: "The main content of the post. Use appropriate emojis and spacing.",
     },
     cta: {
-      type: Type.STRING,
+      type: "string",
       description: "A clear Call to Action.",
     },
     tip: {
-      type: Type.STRING,
+      type: "string",
       description: "A short strategic insight explaining why this structure works for the chosen objective.",
     },
   },
@@ -26,14 +26,13 @@ const responseSchema: Schema = {
 
 // Initialize Gemini Client
 const getAIClient = () => {
-  // Try to get key from process.env (Vite define) or from a direct check if available
   const apiKey = (typeof process !== 'undefined' && process.env ? (process.env.API_KEY || process.env.GEMINI_API_KEY || process.env.GOOGLE_API_KEY) : null);
   
   if (!apiKey) {
     console.error("No API key found in environment variables");
     return null;
   }
-  return new GoogleGenAI({ apiKey });
+  return new GoogleGenerativeAI(apiKey);
 };
 
 export const generatePostContent = async (
@@ -45,7 +44,7 @@ export const generatePostContent = async (
   if (!ai) {
     throw new Error("Configuração Necessária: Por favor, adicione sua GEMINI_API_KEY nos Secrets do Replit para começar.");
   }
-  const model = "gemini-1.5-flash";
+  const modelName = "gemini-1.5-flash";
   
   const prompt = `
     Act as a world-class Social Media Copywriter and Growth Expert.
@@ -64,18 +63,22 @@ export const generatePostContent = async (
   `;
 
   try {
-    const response = await ai.models.generateContent({
-      model: model,
-      contents: prompt,
-      config: {
+    const model = ai.getGenerativeModel({
+      model: modelName,
+      generationConfig: {
         responseMimeType: "application/json",
+        // @ts-ignore
         responseSchema: responseSchema,
         temperature: 0.7,
       },
     });
 
-    if (response.text) {
-      return JSON.parse(response.text) as GeneratedContentResponse;
+    const result = await model.generateContent(prompt);
+    const response = await result.response;
+    const text = response.text();
+
+    if (text) {
+      return JSON.parse(text) as GeneratedContentResponse;
     }
     
     throw new Error("No content generated");
