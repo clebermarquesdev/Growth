@@ -4,72 +4,63 @@ import Dashboard from './components/Dashboard';
 import ContentGenerator from './components/ContentGenerator';
 import CalendarView from './components/CalendarView';
 import AnalyticsView from './components/AnalyticsView';
-import { ViewState, Post, Platform, Objective, PostStatus } from './types';
-
-// Mock Data para visualização do MVP
-const MOCK_POSTS: Post[] = [
-  {
-    id: '1',
-    platform: Platform.LINKEDIN,
-    objective: Objective.AUTHORITY,
-    topic: 'Futuro do SaaS',
-    content: {
-      hook: 'O SaaS como conhecemos está mudando.',
-      body: 'A era dos softwares gigantes e complexos está dando lugar a soluções de nicho...',
-      cta: 'Em qual nicho você está apostando?',
-      tip: 'Ganchos instigantes geram mais comentários.'
-    },
-    status: PostStatus.PUBLISHED,
-    scheduledDate: new Date(Date.now() - 86400000 * 2).toISOString(), // 2 dias atrás
-    metrics: { likes: 45, comments: 12 },
-    createdAt: Date.now()
-  },
-  {
-    id: '2',
-    platform: Platform.INSTAGRAM,
-    objective: Objective.ENGAGEMENT,
-    topic: 'Tour pelo Escritório',
-    content: {
-      hook: 'Onde a mágica acontece ✨',
-      body: 'Finalmente organizei minha mesa. Espaço limpo = mente limpa.',
-      cta: 'Me mostre seu setup nos stories!',
-      tip: 'Conteúdo de bastidores gera confiança.'
-    },
-    status: PostStatus.PUBLISHED,
-    scheduledDate: new Date(Date.now() - 86400000).toISOString(), // Ontem
-    metrics: { likes: 120, comments: 8 },
-    createdAt: Date.now()
-  }
-];
+import { ViewState, Post, PostStatus } from './types';
+import { fetchPosts, createPost, updatePostStatus, updatePostMetrics } from './services/apiService';
 
 const App: React.FC = () => {
   const [currentView, setCurrentView] = useState<ViewState>('dashboard');
-  const [posts, setPosts] = useState<Post[]>(MOCK_POSTS);
+  const [posts, setPosts] = useState<Post[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
-  // Load from local storage on mount (Simple persistence for MVP)
   useEffect(() => {
-    const savedPosts = localStorage.getItem('social-copilot-posts');
-    if (savedPosts) {
-      setPosts(JSON.parse(savedPosts));
-    }
+    const loadPosts = async () => {
+      try {
+        const data = await fetchPosts();
+        setPosts(data);
+      } catch (error) {
+        console.error('Failed to load posts:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    loadPosts();
   }, []);
 
-  // Save to local storage whenever posts change
-  useEffect(() => {
-    localStorage.setItem('social-copilot-posts', JSON.stringify(posts));
-  }, [posts]);
-
-  const handleSavePost = (post: Post) => {
-    setPosts(prev => [post, ...prev]);
-    setCurrentView('calendar');
+  const handleSavePost = async (post: Post) => {
+    try {
+      const savedPost = await createPost({
+        platform: post.platform,
+        objective: post.objective,
+        topic: post.topic,
+        content: post.content,
+        status: post.status,
+        scheduledDate: post.scheduledDate,
+        metrics: post.metrics
+      });
+      setPosts(prev => [savedPost, ...prev]);
+      setCurrentView('calendar');
+    } catch (error) {
+      console.error('Failed to save post:', error);
+      alert('Erro ao salvar post. Tente novamente.');
+    }
   };
 
-  const handleUpdateStatus = (id: string, status: PostStatus) => {
-    setPosts(prev => prev.map(p => p.id === id ? { ...p, status } : p));
+  const handleUpdateStatus = async (id: string, status: PostStatus) => {
+    try {
+      await updatePostStatus(id, status);
+      setPosts(prev => prev.map(p => p.id === id ? { ...p, status } : p));
+    } catch (error) {
+      console.error('Failed to update status:', error);
+    }
   };
 
-  const handleUpdateMetrics = (id: string, likes: number, comments: number) => {
-    setPosts(prev => prev.map(p => p.id === id ? { ...p, metrics: { likes, comments } } : p));
+  const handleUpdateMetrics = async (id: string, likes: number, comments: number) => {
+    try {
+      await updatePostMetrics(id, likes, comments);
+      setPosts(prev => prev.map(p => p.id === id ? { ...p, metrics: { likes, comments } } : p));
+    } catch (error) {
+      console.error('Failed to update metrics:', error);
+    }
   };
 
   const renderView = () => {
