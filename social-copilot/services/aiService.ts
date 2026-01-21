@@ -64,11 +64,12 @@ export const generatePostContent = async (
       ],
       extra_body: {
         "provider": {
-          "order": ["Google", "Mistral", "Meta"],
-          "allow_fallbacks": true
+          "order": ["Google", "Mistral", "Meta", "Anthropic"],
+          "allow_fallbacks": true,
+          "require_parameters": false
         }
       }
-    });
+    } as any);
 
     const text = response.choices[0].message.content;
 
