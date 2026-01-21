@@ -24,9 +24,9 @@ const JWT_SECRET = process.env.JWT_SECRET;
 const JWT_EXPIRY = '7d';
 const SALT_ROUNDS = 10;
 
-const VALID_PLATFORMS = ['linkedin', 'instagram', 'twitter', 'tiktok', 'facebook', 'threads'];
-const VALID_OBJECTIVES = ['engagement', 'authority', 'sales', 'educational', 'storytelling', 'humor'];
-const VALID_STATUSES = ['draft', 'scheduled', 'published'];
+const VALID_PLATFORMS = ['LinkedIn', 'Instagram', 'Twitter/X', 'TikTok', 'Facebook', 'Threads'];
+const VALID_OBJECTIVES = ['Engajamento', 'Autoridade', 'Vendas/Leads', 'Educativo', 'Storytelling', 'Humor/Descontraído'];
+const VALID_STATUSES = ['Rascunho', 'Agendado', 'Publicado', 'draft', 'scheduled', 'published'];
 
 const allowedOrigins = [
   'http://localhost:5000',
