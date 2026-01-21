@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Wand2, Save, RotateCcw, Copy, CheckCircle2, Loader2, Info } from 'lucide-react';
 import { Platform, Objective, GeneratedContentResponse, Post, PostStatus } from '../types';
-import { generatePostContent } from '../services/geminiService';
+import { generatePostContent } from '../services/aiService';
 
 interface ContentGeneratorProps {
   onSave: (post: Post) => void;
